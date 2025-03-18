@@ -1,0 +1,259 @@
+.my-element
+  {
+    animation: fadeIn;
+    animation-duration: 0.5s;
+  }
+.tech
+  {
+    animation: zoomIn;
+    animation-duration: 1s;
+  }
+
+  .select2{
+    width: 100% !important;
+  }
+
+  .form-check .form-check-label input[type="checkbox"] + .input-helper:before
+  {
+    background: #d9d9d9 !important;
+  }
+  .form-check .form-check-label input[type="checkbox"] + .input-helper:after
+  {
+    background: #1f3bb3 !important;
+  }
+
+  select.form-control, select.asColorPicker-input, .dataTables_wrapper select, .select2-container--default select.select2-selection--single, .select2-container--default .select2-selection--single select.select2-search__field, select.typeahead, select.tt-query, select.tt-hint
+{
+    color: #000 !important;
+}
+.w-20{
+    width: 20% !important;
+}
+    #bgimage::-webkit-scrollbar-track
+    {
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    	border-radius: 10px;
+    	background-color: #F1F1F1;
+    }
+
+    #bgimage::-webkit-scrollbar
+    {
+    	width: 10px;
+    	background-color: #d4d4d4;
+    }
+
+    #bgimage::-webkit-scrollbar-thumb
+    {
+    	border-radius: 10px;
+    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    	background-color: #c8c8c8;
+    }
+
+    #bgimage{
+        max-height: 800px; overflow-y: scroll;
+    }
+
+    input{
+        color: #000 !important;
+    }
+
+    .mdi-earth::before {
+        padding-top: 5px;
+    }
+    #Settings-Mobile{
+        display : none;
+    }
+
+    .btn-login{
+        background-color: #3a04d6 !important;
+        color: white  !important;
+        font-size: 17px  !important;
+        font-weight: 600  !important;
+    }
+    .background-cheque{
+        color: #ffffff;padding: 10px;border-radius: 20px;font-weight: 500; text-align:center;width:70%;
+    }
+    .notificationMe{
+        font-weight: 600;
+        padding: 10px 10px 0px 10px;
+        text-align: center;
+    }
+    .card-title{
+        text-align: center;
+    }
+    .model-background{
+        background:#4b4b4b39;
+        width: 100%;
+        z-index: 6;
+        height: 90%;
+    }
+    body{
+        overflow: hidden;
+    }
+    .loading-overlay{
+        position: fixed;
+        background-color: #F1F1F1;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        top: 0;
+    }
+    .spinner2{
+        position: absolute;left: 45%;top: 35%;
+    }
+    .profile-parent{
+        width:50%
+    }
+    .image-profile{
+        border-radius: 140px;
+        width: 200px;
+    }
+    .width-from-profile{
+        width: 50% !important;
+    }
+    @media (max-width: 991px){
+        .width-from-profile{
+            width: 100%!important;
+        }
+        .profile-parent{
+            width:100%
+        }
+        .image-profile{
+            border-radius: 140px;
+            width: 150px;
+        }
+        .spinner2{
+            position: absolute;
+            top: 30%;
+            left: 20%;
+        }
+        .card-title{
+            text-align: start;
+        }
+        .navbar .navbar-menu-wrapper {
+            width: calc(100% - 55px) !important;
+            padding-top: 24px!important;
+            padding-left: 16px!important;
+            padding-right: 34px!important;
+            height: auto!important;
+        }
+        #bgimage:has(div){
+            margin: 4px;
+            margin-top: -40px;
+            margin-right: -25px;
+        }
+        .content-wrapper{
+            padding: 30px 3px !important;
+        }
+        #tableArticle_filter{
+            float: right;
+            padding: 0px 0px;
+        }
+        #tableAchat_filter{
+            float: right;
+            padding: 0px 0px;
+        }
+        #tableAchat_paginate{
+            float: right;
+            transform: scale(0.8);
+        }
+        #tableArticle_paginate{
+            float: right;
+            transform: scale(0.8);
+        }
+        div#totalVisitors {
+            transform: scale(0.6);
+        }
+        div#visitperday {
+            transform: scale(0.6);
+        }
+        #Settings-Mobile{
+            display : block;
+        }
+        .for-pc{
+            opacity: 1;
+            font-size: 17px !important;
+            font-weight: 600;
+            margin-left: 5px;
+            text-align: initial;
+        }
+        .home-tab .circle-progress-width {
+            width: 25% !important;
+            margin-bottom: 20px;
+        }
+        #forPC{
+            padding: 0px !important;
+        }
+        #B1{
+            justify-content: flex-start !important;
+            align-items: flex-start !important;
+            margin-bottom: -8px !important;
+        }
+        #B2{
+            justify-content: flex-start !important;
+            align-items: flex-start !important;
+            margin-bottom: -8px !important;
+        }
+        .group-text{
+            margin-top: 20px;
+        }
+        #statistics{
+            display: block !important;
+            margin-top: -55px;
+            background-color: white;
+            padding-bottom: 14px;
+            border-radius: 20px;
+        }
+        .image-logo{
+            width: 109px !important;
+            margin-top: 140px;
+        }
+        .w-20{
+            width: 95% !important;
+        }
+        .home-tab .statistics-details {
+            margin-bottom: 20px !important;
+        }
+        .content-wrapper {
+            background-color: #00000000 !important;
+            padding: 1.5rem 2.187rem 1.5rem 3.5rem;
+            width: 95% !important;
+            -webkit-flex-grow: 1;
+            flex-grow: 1;
+            margin: 10px!important;
+            border-radius: 20px!important;
+        }
+        .background-cheque{
+            color: #ffffff;padding: 10px;border-radius: 20px;font-weight: 500; text-align:center;width:100%;
+        }
+    }
+    
+   @media screen and (min-width: 460px) and (max-width: 1660px){
+        
+        .login-card-stokcer{
+            width: 385px !important;
+        }
+    }
+    
+    @media screen and ( min-width:991px ) and ( max-width : 1350px){
+        
+        #B1{
+            display: block !important;
+        }
+        
+        #textdashbord{
+            text-align : left !important;
+        }
+        
+        .content-wrapper > div{
+         transform: scale(0.9);
+        }
+        
+        .tech{
+                transform: scale(0.9);
+                margin-top: -18px !important;
+        }
+        
+        
+    }
+
