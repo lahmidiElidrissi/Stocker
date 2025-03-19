@@ -264,10 +264,10 @@ $(document).ready(function() {
                 params.page = params.page || 1;
                 
                 return {
-                    results: data.products.map(function(article) {
+                    results: data.articles.map(function(article) {
                         return {
                             id: article.id,
-                            text: article.Nome + (article.Referance ? ' (' + article.Referance + ')' : ''),
+                            text: article.Nome + (article.barcode ? ' (' + article.barcode + ')' : ''),
                             code: article.barcode,
                             name: article.Nome,
                             price: article.Prix

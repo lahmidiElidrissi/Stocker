@@ -165,7 +165,7 @@ class ArticleController extends Controller
         $perPage = 10;
 
         $articles = Article::where('barcode', 'LIKE', "%{$term}%")
-            ->orWhere('name', 'LIKE', "%{$term}%")
+            ->orWhere('Nome', 'LIKE', "%{$term}%")
             ->paginate($perPage, ['*'], 'page', $page);
 
         return response()->json([
