@@ -18,7 +18,7 @@ class commandeFactory extends Factory
     public function definition()
     {
         return [
-            'dateCommnde' => $this->faker->date(),
+            'date' => $this->faker->date(),
             'client_id' => $this->faker->numberBetween(1, 10),
             'article_id' => $this->faker->numberBetween(1, 10),
             'total' => $this->faker->numberBetween(1, 100),

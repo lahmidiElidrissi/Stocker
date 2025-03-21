@@ -80,7 +80,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h3 class="mb-1">Bon d'Achat #{{ $achat->id }}</h3>
-                                <p class="text-muted">Référence: {{ $achat->Referance ?? 'Non spécifiée' }}</p>
+                                <p class="text-muted">Date: {{ $achat->date ?? 'N/A' }}</p>
                             </div>
                             <div class="col-md-6 text-md-right">
                                 <h4>
@@ -92,7 +92,6 @@
                                         <span class="badge badge-pending">En attente</span>
                                     @endif
                                 </h4>
-                                <p class="mb-0">Date: {{ \Carbon\Carbon::parse($achat->date)->format('d/m/Y') }}</p>
                             </div>
                         </div>
                     </div>
@@ -101,11 +100,11 @@
                     <div class="purchase-meta">
                         <div class="row">
                             <div class="col-md-6">
+                                @if($achat->fournisseur)
                                 <div class="mb-3">
-                                    <span class="info-label">Fournisseur:</span>
+                                    <span class="info-label">Nom de fournisseur:</span>
                                     <span>{{ $achat->fournisseur->Nom ?? 'Non spécifié' }}</span>
                                 </div>
-                                @if($achat->fournisseur)
                                 <div class="mb-3">
                                     <span class="info-label">Contact:</span>
                                     <span>{{ $achat->fournisseur->telephone ?? 'Non spécifié' }}</span>
@@ -118,25 +117,25 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <span class="info-label">Sous-total:</span>
-                                    <span>{{ number_format($achat->subtotal ?? 0, 2) }} €</span>
-                                </div>
-                                <div class="mb-3">
                                     <span class="info-label">TVA ({{ number_format($achat->tax_rate ?? 0, 2) }}%):</span>
-                                    <span>{{ number_format($achat->tax_amount ?? 0, 2) }} €</span>
+                                    <span>{{ number_format($achat->tax_amount ?? 0, 2) }} Dh</span>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="info-label">Total:</span>
-                                    <span class="font-weight-bold">{{ number_format($achat->total, 2) }} €</span>
+                                    <span class="info-label">Total HT:</span>
+                                    <span>{{ number_format($achat->subtotal ?? 0, 2) }} Dh</span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="info-label">Total TTC:</span>
+                                    <span class="font-weight-bold">{{ number_format($achat->total, 2) }} Dh</span>
                                 </div>
                                 <div class="mb-3">
                                     <span class="info-label">Montant payé:</span>
-                                    <span>{{ number_format($achat->paye, 2) }} €</span>
+                                    <span>{{ number_format($achat->paye, 2) }} Dh</span>
                                 </div>
                                 <div class="mb-3">
                                     <span class="info-label">Reste à payer:</span>
                                     <span class="font-weight-bold {{ $achat->du > 0 ? 'text-danger' : '' }}">
-                                        {{ number_format($achat->du, 2) }} €
+                                        {{ number_format($achat->du, 2) }} Dh
                                     </span>
                                 </div>
                             </div>
@@ -163,15 +162,10 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->article->barcode ?? 'N/A' }}</td>
-                                            <td>
-                                                <strong>{{ $item->article->Nome }}</strong>
-                                                @if($item->article->Referance)
-                                                    <br><small class="text-muted">Réf: {{ $item->article->Referance }}</small>
-                                                @endif
-                                            </td>
-                                            <td>{{ number_format($item->prix, 2) }} €</td>
+                                            <td>{{ $item->article->Nome }}</td>
+                                            <td>{{ number_format($item->Prix, 2) }} Dh</td>
                                             <td>{{ $item->Quantite }}</td>
-                                            <td>{{ number_format($item->prix * $item->Quantite, 2) }} €</td>
+                                            <td>{{ number_format($item->Prix * $item->Quantite, 2) }} Dh</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -184,8 +178,8 @@
                                         <td colspan="4" class="text-right">Total:</td>
                                         <td>{{ $achat->articles->sum('Quantite') }}</td>
                                         <td>{{ number_format($achat->articles->sum(function($item) { 
-                                            return $item->prix * $item->Quantite; 
-                                        }), 2) }} €</td>
+                                            return $item->Prix * $item->Quantite; 
+                                        }), 2) }} Dh</td>
                                     </tr>
                                 </tfoot>
                             </table>

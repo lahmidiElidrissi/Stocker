@@ -386,7 +386,7 @@
 
                           </script>
                         <td onclick="update({{$Commande->id}})" style="cursor:pointer;">
-                          {{$Commande->dateCommnde}}
+                          {{$Commande->date}}
                         </td>
                         <td onclick="update({{$Commande->id}})" style="cursor:pointer;">
                           {{$Commande->client->Nom}}
@@ -464,7 +464,7 @@
               success:function(data) {                  
                 $('#ModelBackgroundModifier').css("display", "block");
                   $('input[name="idDeCommande"]').val(data['id']);
-                  $('input[name="laDate"]').val(data['dateCommnde']);
+                  $('input[name="laDate"]').val(data['date']);
                   $('input[name="totel"]').val(data['total']);
                   $('input[name="paye"]').val(data['paye']);
                   $('input[name="du"]').val(data['du']);

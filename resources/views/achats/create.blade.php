@@ -56,11 +56,6 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="Referance">Référence</label>
-                                    <input type="text" class="form-control" id="Referance" name="Referance" value="{{ old('Referance') }}">
-                                </div>
-
-                                <div class="form-group mb-3">
                                     <label for="fournisseur_id">Fournisseur</label>
                                     <select class="form-control select2" id="fournisseur_id" name="fournisseur_id">
                                         <option value="">Sélectionner un Fournisseur</option>
@@ -87,13 +82,18 @@
                             
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="subtotal">Sous-total</label>
+                                    <label for="subtotal">Total HT</label>
                                     <input type="number" class="form-control" id="subtotal" name="subtotal" value="{{ old('subtotal', 0) }}" readonly>
                                 </div>
-                                
+
+                                <div class="form-group mb-3">
+                                    <label for="total">Total TTC</label>
+                                    <input type="number" class="form-control" id="total" name="total" value="{{ old('total', 0) }}" readonly>
+                                </div>
+
                                 <div class="form-group mb-3">
                                     <label for="tax_rate">Taux de TVA (%)</label>
-                                    <input type="number" class="form-control" id="tax_rate" name="tax_rate" value="{{ old('tax_rate', 20) }}" min="0" max="100" step="0.01" onchange="calculateTotals()">
+                                    <input type="number" class="form-control" id="tax_rate" name="tax_rate" value="{{ old('tax_rate', 0) }}" min="0" max="100" step="0.01" onchange="calculateTotals()">
                                 </div>
                                 
                                 <div class="form-group mb-3">
@@ -102,24 +102,20 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="total">Total</label>
-                                    <input type="number" class="form-control" id="total" name="total" value="{{ old('total', 0) }}" readonly>
-                                </div>
-
-                                <div class="form-group mb-3">
                                     <label for="paye">Payé</label>
                                     <input type="number" class="form-control" id="paye" name="paye" value="{{ old('paye', 0) }}" min="0" onchange="updateDue()">
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="du">Dû</label>
+                                    <label for="du">Credit</label>
                                     <input type="number" class="form-control" id="du" name="du" value="{{ old('du', 0) }}" readonly>
                                 </div>
+
                             </div>
                         </div>
                         
                         <!-- Article Search with Select2 -->
-                        <div class="row mb-3">
+                        <div class="row mb-3" style="align-items: center;">
                             <div class="col-md-9">
                                 <div class="form-group">
                                     <label for="article_select">Rechercher/Ajouter un Article</label>

@@ -85,7 +85,6 @@ class AchatController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'date' => 'required|date',
-            'Referance' => 'nullable|string|max:255',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
             'contenir_id' => 'nullable|exists:contenirs,id',
             'total' => 'required|numeric|min:0',
@@ -108,7 +107,6 @@ class AchatController extends Controller
         // Create new achat
         $achat = new Achat();
         $achat->date = $request->date;
-        $achat->Referance = $request->Referance;
         $achat->fournisseur_id = $request->fournisseur_id;
         $achat->contenir_id = $request->contenir_id;
 
@@ -193,7 +191,6 @@ class AchatController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'date' => 'required|date',
-            'Referance' => 'nullable|string|max:255',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
             'contenir_id' => 'nullable|exists:contenirs,id',
             'subtotal' => 'required|numeric|min:0',
@@ -216,7 +213,6 @@ class AchatController extends Controller
             // Update achat
             $achat = Achat::findOrFail($id);
             $achat->date = $request->date;
-            $achat->Referance = $request->Referance;
             $achat->fournisseur_id = $request->fournisseur_id;
             $achat->contenir_id = $request->contenir_id;
             $achat->subtotal = $request->subtotal;

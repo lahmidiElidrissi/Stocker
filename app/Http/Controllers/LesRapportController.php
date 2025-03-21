@@ -41,35 +41,35 @@ class LesRapportController extends Controller
 
         //ce semaine data From DB
          $dataSunday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Sunday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Sunday.$char1.'; ');
          $dataMonday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Monday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Monday.$char1.'; ');
          $datatTuesday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Tuesday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Tuesday.$char1.'; ');
          $dataWednesday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Wednesday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Wednesday.$char1.'; ');
          $dataThursday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Thursday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Thursday.$char1.'; ');
          $dataFriday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Friday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Friday.$char1.'; ');
          $dataSaturday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$Saturday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$Saturday.$char1.'; ');
 
          //Dernière semaine data From DB
          $dataLastMonday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastMonday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastMonday.$char1.'; ');
          $dataLastTuesday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastTuesday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastTuesday.$char1.'; ');
          $dataLastWednesday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastWednesday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastWednesday.$char1.'; ');
          $dataLastThursday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastThursday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastThursday.$char1.'; ');
          $dataLastFriday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastFriday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastFriday.$char1.'; ');
          $dataLastSaturday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastSaturday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastSaturday.$char1.'; ');
          $dataLastSunday = DB::select('SELECT IFNULL(sum(aricle_commandes.Quantite) , 0) as Total_Quantite FROM aricle_commandes,commandes
-         where aricle_commandes.commande_id = commandes.id AND commandes.dateCommnde = '.$char1.$LastSunday.$char1.'; ');
+         where aricle_commandes.commande_id = commandes.id AND commandes.date = '.$char1.$LastSunday.$char1.'; ');
 
 
         //Data De Ce Semaine
@@ -83,7 +83,7 @@ class LesRapportController extends Controller
 
     function TopClient()
     {
-        $TopClient = DB::select('SELECT getnameclient(client_id) as name ,  sum(total) as totalprix ,max(dateCommnde) as dates FROM `commandes` GROUP by client_id order by totalprix DESC;');
+        $TopClient = DB::select('SELECT getnameclient(client_id) as name ,  sum(total) as totalprix ,max(date) as dates FROM `commandes` GROUP by client_id order by totalprix DESC;');
         return view('clientRapport')->with('TopClient',$TopClient);;
     }
     function DashbordRapportsStock()
@@ -120,36 +120,36 @@ class LesRapportController extends Controller
 
         //ce semaine data From DB
         $dataSunday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Sunday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Sunday.$char1.'; ');
         
         $dataMonday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Monday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Monday.$char1.'; ');
         $datatTuesday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Tuesday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Tuesday.$char1.'; ');
         $dataWednesday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Wednesday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Wednesday.$char1.'; ');
         $dataThursday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Thursday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Thursday.$char1.'; ');
         $dataFriday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Friday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Friday.$char1.'; ');
         $dataSaturday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$Saturday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$Saturday.$char1.'; ');
 
         //Dernière semaine data From DB
         $dataLastMonday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastMonday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastMonday.$char1.'; ');
         $dataLastTuesday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastTuesday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastTuesday.$char1.'; ');
         $dataLastWednesday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastWednesday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastWednesday.$char1.'; ');
         $dataLastThursday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastThursday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastThursday.$char1.'; ');
         $dataLastFriday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastFriday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastFriday.$char1.'; ');
         $dataLastSaturday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastSaturday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastSaturday.$char1.'; ');
         $dataLastSunday = DB::select('SELECT IFNULL(max(commandes.total) , 0) as Total_Quantite FROM aricle_commandes,commandes,articles
-        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.dateCommnde = '.$char1.$LastSunday.$char1.'; ');
+        where aricle_commandes.commande_id = commandes.id AND aricle_commandes.article_id = articles.id AND commandes.date = '.$char1.$LastSunday.$char1.'; ');
 
 
         //Data De Ce Semaine

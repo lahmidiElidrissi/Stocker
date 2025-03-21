@@ -70,30 +70,31 @@ Route::middleware([
     //Page (Article) with DB
     Route::resource('/articles', ArticleController::class)->middleware(lan::class);
     Route::post('/destroy-multiple', [ArticleController::class, 'destroyMultiple'])
-         ->name('destroyMultiple');
+        ->name('destroyMultiple');
 
     Route::resource('/achats', AchatController::class)->middleware(lan::class);
     Route::post('/achats/multi-delete', [AchatController::class, 'multiDelete'])
         ->name('achats.multi-delete')
         ->middleware(lan::class);
-        
+
     Route::get('/api/products/search', [ArticleController::class, 'apiSearch'])->name('api.articles.search');
     Route::post('/api/products/store', [ArticleController::class, 'apiStore'])->name('api.articles.store');
-    
+
     Route::get('achats/{achat}/pdf', [AchatController::class, 'generatePDF'])->name('achats.pdf');
 
 
     //Page (Commande) with DB
-    Route::get('/GestionDesCommandes', [CommandeController::class, 'GetCommandes'])->name('viewGestionDCommandes')->middleware(lan::class);
-    //CRUD (Commande) -Model-
-    Route::Post('ajoute/Commande', [CommandeController::class, 'addCommande'])->name('viewaddCommande')->middleware(lan::class);
-    Route::Post('update/Commande', [CommandeController::class, 'UpdateCommande'])->name('viewUpdateCommande')->middleware(lan::class);
-    Route::Post('delete/Commande', [CommandeController::class, 'deleteCommande'])->name('viewdeleteCommande')->middleware(lan::class);
-    Route::Post('/GetInfoForUpdate/Commande', [CommandeController::class, 'GetInfo'])->name('viewGetInfoCommande')->middleware(lan::class);
-    Route::Post('/GetArticles/Commande', [CommandeController::class, 'ArticlesDeCommande'])->name('viewGetArticlesDeCommande')->middleware(lan::class);
-    Route::Post('/commande/SelectionDelete', [CommandeController::class, 'SelectionDelete'])->name('commandeSelectionDelete')->middleware(lan::class);
-    Route::Post('/commande/GetTotal', [CommandeController::class, 'GetTotal'])->name('GetTotal')->middleware(lan::class);
-    Route::Post('/commande/makepdfCommande', [CommandeController::class, 'GetPDF'])->name('makepdfCommande')->middleware(lan::class);
+    Route::resource('commandes', \App\Http\Controllers\CommandeController::class);
+    // Bulk delete route
+    Route::post('commandes/multi-delete', [\App\Http\Controllers\CommandeController::class, 'multiDelete'])
+        ->name('commandes.multi-delete');
+    // PDF generation route
+    Route::get('commandes/{id}/pdf', [\App\Http\Controllers\CommandeController::class, 'generatePDF'])
+        ->name('commandes.pdf');
+    // API routes for AJAX
+    Route::get('api/articles/search', [ArticleController::class, 'apiSearch'])->name('api.articles.search');
+    Route::post('api/articles/store', [ArticleController::class, 'apiStore'])->name('api.articles.store');
+    Route::get('clients/list', [ClientController::class, 'getClientsList'])->name('clients.list');
 
     //Page (user) with DB
     Route::get('/GestiondesUtilisateurs', [UserController::class, 'GetUsers'])->name('viewGestiondesUtilisateurs')->middleware(lan::class);

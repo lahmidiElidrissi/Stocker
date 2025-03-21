@@ -44,7 +44,7 @@
                     &nbsp;
                 </td>
                 <td style="width: 45%;">
-                    <h4>Date :  {{ date('d-m-Y', strtotime($Commande->dateCommnde));}}</h4> 
+                    <h4>Date :  {{ date('d-m-Y', strtotime($Commande->date));}}</h4> 
                     <div style="width: 100%;border: solid 1px #FF7676;">
                         <div style="padding-left: 10px;">
                         <h4> {{$client->Nom}} <br> {{$client->Societe}} <br> {{$client->Telephone}} </h4>

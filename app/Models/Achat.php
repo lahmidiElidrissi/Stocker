@@ -11,7 +11,6 @@ class Achat extends Model
 
     protected $fillable = [
         'date',
-        'Referance',
         'fournisseur_id',
         'contenir_id',
         'subtotal',

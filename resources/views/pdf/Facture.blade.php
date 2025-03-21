@@ -115,7 +115,7 @@
 
 								<td>
 									numero Facture #: {{$Commande->id}}<br />
-									Date: {{$Commande->dateCommnde}}<br />
+									Date: {{$Commande->date}}<br />
 								</td>
 							</tr>
 						</table>

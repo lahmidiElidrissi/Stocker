@@ -180,7 +180,7 @@
             </a>
             <div class="collapse" id="form-elements">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="{{route('viewGestionDCommandes')}}" onclick="loadNow()">{{ __('master.managerOrder') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{route('commandes.index')}}" onclick="loadNow()">{{ __('master.managerOrder') }}</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{route('viewGestiondesCheqes')}}" onclick="loadNow()">{{ __('master.chequeManagement') }}</a></li>
               </ul>
             </div>

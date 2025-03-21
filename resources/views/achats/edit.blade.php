@@ -57,11 +57,6 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="Referance">Référence</label>
-                                    <input type="text" class="form-control" id="Referance" name="Referance" value="{{ old('Referance', $achat->Referance) }}">
-                                </div>
-
-                                <div class="form-group mb-3">
                                     <label for="fournisseur_id">Fournisseur</label>
                                     <select class="form-control select2" id="fournisseur_id" name="fournisseur_id">
                                         <option value="">Sélectionner un Fournisseur</option>
@@ -88,10 +83,15 @@
                             
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="subtotal">Sous-total</label>
+                                    <label for="subtotal">Total HT</label>
                                     <input type="number" class="form-control" id="subtotal" name="subtotal" value="{{ old('subtotal', $achat->subtotal) }}" readonly>
                                 </div>
                                 
+                                <div class="form-group mb-3">
+                                    <label for="total">Total TTC</label>
+                                    <input type="number" class="form-control" id="total" name="total" value="{{ old('total', $achat->total) }}" readonly>
+                                </div>
+
                                 <div class="form-group mb-3">
                                     <label for="tax_rate">Taux de TVA (%)</label>
                                     <input type="number" class="form-control" id="tax_rate" name="tax_rate" value="{{ old('tax_rate', $achat->tax_rate) }}" min="0" max="100" step="0.01" onchange="calculateTotals()">
@@ -103,24 +103,19 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="total">Total</label>
-                                    <input type="number" class="form-control" id="total" name="total" value="{{ old('total', $achat->total) }}" readonly>
-                                </div>
-
-                                <div class="form-group mb-3">
                                     <label for="paye">Payé</label>
                                     <input type="number" class="form-control" id="paye" name="paye" value="{{ old('paye', $achat->paye) }}" min="0" onchange="updateDue()">
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="du">Dû</label>
+                                    <label for="du">Credit</label>
                                     <input type="number" class="form-control" id="du" name="du" value="{{ old('du', $achat->du) }}" readonly>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Article Search with Select2 -->
-                        <div class="row mb-3">
+                        <div class="row mb-3" style="align-items: center;">
                             <div class="col-md-9">
                                 <div class="form-group">
                                     <label for="article_select">Rechercher/Ajouter un Article</label>
@@ -130,7 +125,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#newArticleModal">
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newArticleModal">
                                     <i class="fa fa-plus"></i> Nouvel Article
                                 </button>
                             </div>
@@ -176,7 +171,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="newArticleModalLabel">Créer un Nouvel Article</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -191,12 +186,16 @@
                         <input type="text" class="form-control" id="new_article_code">
                     </div>
                     <div class="form-group">
-                        <label for="new_article_reference">Référence</label>
-                        <input type="text" class="form-control" id="new_article_reference">
-                    </div>
-                    <div class="form-group">
                         <label for="new_article_price">Prix</label>
                         <input type="number" class="form-control" id="new_article_price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prix_gros">Prix de gros</label>
+                        <input type="number" class="form-control" id="prix_gros" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prix_achat">Prix d'achat</label>
+                        <input type="number" class="form-control" id="prix_achat" min="0" step="0.01" required>
                     </div>
                     <div class="form-group">
                         <label for="new_article_category">Catégorie</label>
@@ -209,13 +208,13 @@
                     </div>
                     <div class="form-group">
                         <label for="new_article_image">Image</label>
-                        <input type="file" class="form-control" id="new_article_image" accept="image/*">
+                        <input type="file" class="form-control h-auto" id="new_article_image" accept="image/*">
                         <div id="image_preview_container"></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="createNewArticle()">Créer et Ajouter</button>
             </div>
         </div>
@@ -340,8 +339,9 @@ function createNewArticle() {
     const formData = new FormData();
     formData.append('Nome', document.getElementById('new_article_name').value);
     formData.append('barcode', document.getElementById('new_article_code').value);
-    formData.append('Referance', document.getElementById('new_article_reference').value);
     formData.append('Prix', document.getElementById('new_article_price').value);
+    formData.append('prix_gros', document.getElementById('prix_gros').value);
+    formData.append('prix_achat', document.getElementById('prix_achat').value);
     formData.append('categorie_id', document.getElementById('new_article_category').value);
     
     // Append image if it exists

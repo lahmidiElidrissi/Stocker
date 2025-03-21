@@ -169,7 +169,7 @@
                                         
                                         <div class="col-md-6">
                                             <label class="form-label">Code barres</label>
-                                            <input type="text" name="Referance" class="form-control" value="{{ $article->barcode }}" required>
+                                            <input type="text" name="barcode" class="form-control" value="{{ $article->barcode }}">
                                         </div>
                                         
                                         <div class="col-12">

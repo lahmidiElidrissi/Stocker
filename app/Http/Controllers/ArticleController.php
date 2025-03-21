@@ -106,7 +106,7 @@ class ArticleController extends Controller
     {
         $validatedData = $request->validate([
             'Nome' => 'required|string|max:255',
-            'Prix' => 'nullable|numeric|min:0',
+            'Prix' => 'required|numeric|min:0',
             'prix_gros' => 'nullable|numeric|min:0',
             'prix_achat' => 'nullable|numeric|min:0',
             'Referance' => 'nullable',
@@ -180,10 +180,10 @@ class ArticleController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'Nome' => 'required|string|max:255',
-            'barcode' => 'required|string',
+            'barcode' => 'nullable|string',
             'Prix' => 'required|numeric|min:0',
-            'prix_gros' => 'required|numeric|min:0',
-            'prix_achat' => 'required|numeric|min:0',
+            'prix_gros' => 'nullable|numeric|min:0',
+            'prix_achat' => 'nullable|numeric|min:0',
             'categorie_id' => 'nullable|exists:categories,id'
         ]);
 

@@ -111,8 +111,8 @@
                                     <div class="section-title">Informations de base</div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="article-label">ID</div>
-                                            <div class="article-value">{{ $article->id }}</div>
+                                            <div class="article-label">Barecode</div>
+                                            <div class="article-value">{{ $article->barcode }}</div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="article-label">Nom Article</div>
