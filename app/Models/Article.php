@@ -19,7 +19,7 @@ class Article extends Model
         'Prix',
         'prix_gros',
         'prix_achat',
-        'prix_temperament',
+        'prix_importation',
         'Referance',
         'barcode',
         'categorie_id',

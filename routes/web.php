@@ -79,8 +79,8 @@ Route::middleware([
 
     Route::get('/api/products/search', [ArticleController::class, 'apiSearch'])->name('api.articles.search');
     Route::post('/api/products/store', [ArticleController::class, 'apiStore'])->name('api.articles.store');
-
     Route::get('achats/{achat}/pdf', [AchatController::class, 'generatePDF'])->name('achats.pdf');
+    Route::post('/api/fournisseurs/store', [FournisseurController::class, 'storeFournisseur'])->name('api.fournisseurs.store');
 
 
     //Page (Commande) with DB
@@ -89,8 +89,9 @@ Route::middleware([
     Route::post('commandes/multi-delete', [\App\Http\Controllers\CommandeController::class, 'multiDelete'])
         ->name('commandes.multi-delete');
     // PDF generation route
-    Route::get('commandes/{id}/pdf', [\App\Http\Controllers\CommandeController::class, 'generatePDF'])
-        ->name('commandes.pdf');
+    Route::get('commandes/{commande}/pdf/view', [CommandeController::class, 'viewPdf'])->name('commandes.pdf.view');
+    Route::get('commandes/{commande}/pdf/download', [CommandeController::class, 'downloadPdf'])->name('commandes.pdf.download');
+
     // API routes for AJAX
     Route::get('api/articles/search', [ArticleController::class, 'apiSearch'])->name('api.articles.search');
     Route::post('api/articles/store', [ArticleController::class, 'apiStore'])->name('api.articles.store');

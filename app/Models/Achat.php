@@ -16,9 +16,7 @@ class Achat extends Model
         'subtotal',
         'tax_rate',
         'tax_amount',
-        'total',
-        'paye',
-        'du'
+        'total'
     ];
 
     /**

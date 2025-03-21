@@ -54,8 +54,6 @@
                                 <th>Date</th>
                                 <th>Fournisseur</th>
                                 <th>Total</th>
-                                <th>Payé</th>
-                                <th>Credit  </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -109,18 +107,17 @@ $(document).ready(function() {
         ajax: "{{ route('achats.index') }}",
         columns: [
             {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
-            {data: 'id', name: 'id'},
+            {data: 'id', name: 'id', visible: false},
             {data: 'date', name: 'date'},
             {data: 'fournisseur', name: 'fournisseur'},
             {data: 'total', name: 'total', render: function(data) { return data + ' Dh'; }},
-            {data: 'paye', name: 'paye', render: function(data) { return data + ' Dh'; }},
-            {data: 'du', name: 'du', render: function(data) { return data + ' Dh'; }},
-            {data: 'actions', name: 'actions', orderable: false, searchable: false}
+            {data: 'actions', name: 'actions', orderable: false, searchable: false},
+            {data: 'updated_at', title: 'Last Updated', orderable: true, visible: false }
         ],
         language: {
             url: '/datatableTrans/fr-FR.json'
         },
-        order: [[1, 'desc']]
+        order: [[6, 'desc']]
     });
 
     // Handle check all checkbox
@@ -185,6 +182,33 @@ $(document).ready(function() {
                 data: form.serialize(),
                 success: function(response) {
                     table.ajax.reload();
+                }
+            });
+        }
+    });
+
+
+    $(document).on('click', '.btn-delete', function(e) {
+        e.preventDefault();
+        
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet achat?')) {
+            var deleteUrl = $(this).data('url');
+            var token = $(this).data('token');
+            
+            $.ajax({
+                url: deleteUrl,
+                type: 'POST',
+                data: {
+                    '_method': 'DELETE',
+                    '_token': token
+                },
+                success: function(response) {
+                    // Reload the DataTable to reflect the changes
+                    $('#achats-table').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Delete error:', error);
+                    alert('Une erreur est survenue lors de la suppression.');
                 }
             });
         }

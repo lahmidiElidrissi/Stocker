@@ -118,12 +118,13 @@ $(document).ready(function() {
             {data: 'total', name: 'total', render: function(data) { return data + ' Dh'; }},
             {data: 'paye', name: 'paye', render: function(data) { return data + ' Dh'; }},
             {data: 'du', name: 'du', render: function(data) { return data + ' Dh'; }},
-            {data: 'actions', name: 'actions', orderable: false, searchable: false}
+            {data: 'actions', name: 'actions', orderable: false, searchable: false},
+            { data: 'updated_at', title: 'Last Updated', orderable: true, visible: false }
         ],
         language: {
             url: '/datatableTrans/fr-FR.json'
         },
-        order: [[1, 'desc']]
+        order: [[9, 'desc']]
     });
 
     // Handle check all checkbox

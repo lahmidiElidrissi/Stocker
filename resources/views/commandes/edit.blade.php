@@ -411,6 +411,14 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="form-group row mb-3 mt-2">
+                                                    <div class="col-sm-12">
+                                                        <button type="button" class="btn btn-success w-100" id="mark-as-paid-btn" onclick="markAsPaid()">
+                                                            <i class="mdi mdi-check-circle"></i> Marquer comme Payé
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                                 <hr>
 
                                                 <div class="form-group row mb-2">
@@ -983,8 +991,6 @@
             document.getElementById('tax_amount').value = taxAmount.toFixed(2);
             document.getElementById('total').value = total.toFixed(2);
 
-            document.getElementById('paye').value = total.toFixed(2);
-
             // Update due amount
             updateDueAmount();
         }
@@ -1079,6 +1085,23 @@
                     // If fetch fails, just reload the page
                     window.location.reload();
                 });
+        }
+
+        function markAsPaid() {
+            const totalAmount = parseFloat(document.getElementById('total').value) || 0;
+            const paidAmount = parseFloat(document.getElementById('paye').value) || 0;
+            const dueAmount = parseFloat(document.getElementById('du').value) || 0;
+
+            if (dueAmount <= 0) {
+                alert('Ce compte est déjà payé intégralement.');
+                return;
+            }
+
+            // Update the paid amount by adding the current due amount
+            document.getElementById('paye').value = (paidAmount + dueAmount).toFixed(2);
+
+            // Recalculate due amount (should be 0)
+            updateDueAmount();
         }
     </script>
 @endsection

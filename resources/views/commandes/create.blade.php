@@ -341,8 +341,8 @@
                                                         </select>
                                                     </div>
                                                     <button type="button" class="btn btn-primary mt-3"
-                                                            data-bs-toggle="modal" data-bs-target="#newClientModal">
-                                                            <i class="mdi mdi-account-plus"></i> Ajouter un client
+                                                        data-bs-toggle="modal" data-bs-target="#newClientModal">
+                                                        <i class="mdi mdi-account-plus"></i> Ajouter un client
                                                     </button>
                                                     @error('client_id')
                                                         <span class="invalid-feedback"
@@ -405,6 +405,15 @@
                                                         <input type="number" step="0.01"
                                                             class="form-control text-danger fw-bold" id="du"
                                                             name="du" value="{{ old('du', '0.00') }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mb-3 mt-2">
+                                                    <div class="col-sm-12">
+                                                        <button type="button" class="btn btn-success w-100"
+                                                            id="mark-as-paid-btn" onclick="markAsPaid()">
+                                                            <i class="mdi mdi-check-circle"></i> Marquer comme Payé
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -676,7 +685,7 @@
                                         .barcode + ')' : ''),
                                     code: article.barcode,
                                     name: article.Nome,
-                                    price: article.prix_gros // Change from article.Prix to article.prix_gros
+                                    price: article.prix_gros
                                 };
                             }),
                             pagination: {
@@ -716,7 +725,8 @@
                     '<div class="select2-result-article__title">' + article.name + '</div>' +
                     (article.code ? '<div class="select2-result-article__code">Code: ' + article.code +
                         '</div>' : '') +
-                    '<div class="select2-result-article__price">Prix de gros : ' + parseFloat(article.price).toFixed(2) +
+                    '<div class="select2-result-article__price">Prix de gros : ' + parseFloat(article.price)
+                    .toFixed(2) +
                     '</div>' +
                     '</div>'
                 );
@@ -971,9 +981,6 @@
             document.getElementById('tax_amount').value = taxAmount.toFixed(2);
             document.getElementById('total').value = total.toFixed(2);
 
-            // Set paid amount equal to total by default
-            document.getElementById('paye').value = total.toFixed(2);
-
             // Update due amount
             updateDueAmount();
         }
@@ -1127,8 +1134,6 @@
             document.getElementById('reference').value = reference;
         }
 
-
-
         function fetchClients() {
             fetch('{{ route('clients.list') }}') // You'll need to create this route that returns JSON
                 .then(response => response.json())
@@ -1155,6 +1160,23 @@
                     // If fetch fails, just reload the page
                     window.location.reload();
                 });
+        }
+
+        function markAsPaid() {
+            const totalAmount = parseFloat(document.getElementById('total').value) || 0;
+            const paidAmount = parseFloat(document.getElementById('paye').value) || 0;
+            const dueAmount = parseFloat(document.getElementById('du').value) || 0;
+
+            if (dueAmount <= 0) {
+                alert('Ce compte est déjà payé intégralement.');
+                return;
+            }
+
+            // Update the paid amount by adding the current due amount
+            document.getElementById('paye').value = (paidAmount + dueAmount).toFixed(2);
+
+            // Recalculate due amount (should be 0)
+            updateDueAmount();
         }
     </script>
 @endsection

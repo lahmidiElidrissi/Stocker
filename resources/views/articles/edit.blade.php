@@ -204,6 +204,14 @@
                                                 <span class="input-group-text">Dh</span>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Prix d'importation</label>
+                                            <div class="input-group price-field">
+                                                <input type="number" name="prix_importation" step="0.01" class="form-control" value="{{ $article->prix_importation }}">
+                                                <span class="input-group-text">Dh</span>
+                                            </div>
+                                        </div>
                                         
                                         <div class="col-md-4">
                                             <label class="form-label">Prix d'achat</label>

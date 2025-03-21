@@ -137,7 +137,7 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <div class="price-card">
-                                                <div class="price-title">Prix de vente</div>
+                                                <div class="price-title">Prix detail</div>
                                                 <div class="price-value">{{ number_format($article->Prix, 2) }}</div>
                                             </div>
                                         </div>
@@ -145,6 +145,12 @@
                                             <div class="price-card">
                                                 <div class="price-title">Prix de gros</div>
                                                 <div class="price-value">{{ number_format($article->prix_gros, 2) }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="price-card">
+                                                <div class="price-title">Prix d'importation</div>
+                                                <div class="price-value">{{ number_format($article->prix_importation, 2) }}</div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">

@@ -17,8 +17,8 @@ class CreateFournisseursTable extends Migration
             $table->id();
             $table->string('Nom');
             $table->string('image')->nullable();
-            $table->string('email');
-            $table->string('telephone');
+            $table->string('email')->nullable();
+            $table->string('telephone')->nullable();
             $table->timestamps();
         });
     }

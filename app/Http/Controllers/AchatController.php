@@ -12,7 +12,7 @@ use App\Models\Fournisseur;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -26,10 +26,9 @@ class AchatController extends Controller
      */
     public function index(Request $request)
     {
-        $achats = Achat::with(['contenir', 'fournisseur'])->latest();
+        $achats = Achat::with(['contenir', 'fournisseur'])->get();
 
         if ($request->ajax()) {
-            $achats = Achat::with(['contenir', 'fournisseur'])->latest();
 
             return DataTables::of($achats)
                 ->addIndexColumn()
@@ -48,8 +47,11 @@ class AchatController extends Controller
                     <a href="' . route('achats.edit', $row->id) . '" class="btn btn-success me-2 buttontr d-flex align-items-center">
                         <i class="mdi mdi-pencil mx-auto"></i>
                     </a>
-                    <button class="btn btn-danger delete-achat me-2 buttontr d-flex align-items-center" data-id="' . $row->id . '">
-                        <i class="mdi mdi-delete mx-auto"></i>
+                    <button type="button" 
+                    class="btn btn-danger buttontr d-flex align-items-center btn-delete" 
+                        data-url="' . route('achats.destroy', $row->id) . '" 
+                        data-token="' . csrf_token() . '">
+                    <i class="mdi mdi-delete"></i>
                     </button>
                     </div>';
                 })
@@ -88,8 +90,6 @@ class AchatController extends Controller
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
             'contenir_id' => 'nullable|exists:contenirs,id',
             'total' => 'required|numeric|min:0',
-            'paye' => 'required|numeric|min:0',
-            'du' => 'required|numeric',
             'articles' => 'required|array',
             'articles.*.article_id' => 'required|exists:articles,id',
             'articles.*.Quantite' => 'required|numeric|min:1',
@@ -124,14 +124,12 @@ class AchatController extends Controller
         }
 
         $achat->total = $request->total;
-        $achat->paye = $request->paye;
-        $achat->du = $request->du;
         $achat->save();
 
         // Create article relationships
         if (isset($request->articles) && is_array($request->articles)) {
             foreach ($request->articles as $articleData) {
-                if (!isset($articleData['article_id']) || !isset($articleData['Quantite']) || !isset($articleData['CustomPrix'])) {
+                if (!isset($articleData['article_id']) || !isset($articleData['Quantite']) || !isset($articleData['prix_importation'])) {
                     continue; // Skip invalid entries
                 }
 
@@ -140,6 +138,9 @@ class AchatController extends Controller
                 $achatArticle->article_id = $articleData['article_id'];
                 $achatArticle->Quantite = $articleData['Quantite'];
                 $achatArticle->prix = $articleData['CustomPrix'];
+                $achatArticle->prix_gros = $articleData['prix_gros'];
+                $achatArticle->prix_achat = $articleData['prix_achat'];
+                $achatArticle->prix_importation = $articleData['prix_importation'];
                 $achatArticle->save();
             }
         }
@@ -197,8 +198,6 @@ class AchatController extends Controller
             'tax_rate' => 'required|numeric|min:0|max:100',
             'tax_amount' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
-            'paye' => 'required|numeric|min:0',
-            'du' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -219,8 +218,6 @@ class AchatController extends Controller
             $achat->tax_rate = $request->tax_rate;
             $achat->tax_amount = $request->tax_amount;
             $achat->total = $request->total;
-            $achat->paye = $request->paye;
-            $achat->du = $request->du;
             $achat->save();
 
             // Delete existing article relationships
@@ -234,6 +231,9 @@ class AchatController extends Controller
                     $achatArticle->article_id = $articleData['article_id'];
                     $achatArticle->Quantite = $articleData['Quantite'];
                     $achatArticle->prix = $articleData['CustomPrix'];
+                    $achatArticle->prix_gros = $articleData['prix_gros'];
+                    $achatArticle->prix_achat = $articleData['prix_achat'];
+                    $achatArticle->prix_importation = $articleData['prix_importation'];
                     $achatArticle->save();
                 }
             }
@@ -257,9 +257,10 @@ class AchatController extends Controller
      * @param  \App\Models\Achat  $achat
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Achat $GestionDesAchat)
+    public function destroy($id)
     {
-        $GestionDesAchat->delete();
+        $achat = Achat::findOrFail($id);
+        $achat->delete();
 
         if (request()->ajax()) {
             return response()->json(['success' => true]);

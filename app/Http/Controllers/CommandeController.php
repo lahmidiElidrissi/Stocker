@@ -23,7 +23,7 @@ class CommandeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $commandes = Commande::with(['client'])->latest();
+            $commandes = Commande::with(['client'])->get();
 
             return DataTables::of($commandes)
                 ->addIndexColumn()
@@ -44,7 +44,7 @@ class CommandeController extends Controller
                     <button class="btn btn-danger delete-commande me-2 buttontr d-flex align-items-center" data-id="' . $row->id . '">
                         <i class="mdi mdi-delete mx-auto"></i>
                     </button>
-                    <a href="' . route('commandes.pdf', $row->id) . '" class="btn btn-success me-2 buttontr d-flex align-items-center" target="_blank">
+                    <a href="' . route('commandes.pdf.view', $row->id) . '" class="btn btn-success me-2 buttontr d-flex align-items-center" target="_blank">
                         <i class="mdi mdi-file-pdf mx-auto"></i>
                     </a>
                     </div>';
@@ -178,7 +178,7 @@ class CommandeController extends Controller
         $commandeArticles = AricleCommande::where('commande_id', $id)
             ->with('article')
             ->get();
-        
+
         return view('commandes.edit', compact('commande', 'clients', 'categories', 'commandeArticles'));
     }
 
@@ -301,25 +301,6 @@ class CommandeController extends Controller
     }
 
     /**
-     * Generate PDF for the specified commande.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function generatePDF($id)
-    {
-        $commande = Commande::with([
-            'articles.article',
-            'client'
-        ])->findOrFail($id);
-
-        $pdf = FacadePdf::loadView('commandes.pdf', compact('commande'));
-        $pdf->setPaper('a4', 'portrait');
-
-        return $pdf->download('commande-' . $commande->id . '-' . date('Y-m-d') . '.pdf');
-    }
-
-    /**
      * Search for articles by name or barcode.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -341,5 +322,41 @@ class CommandeController extends Controller
                 'more' => $articles->hasMorePages()
             ]
         ]);
+    }
+
+    /**
+     * Display the PDF in browser
+     */
+    public function viewPdf(Commande $commande)
+    {
+        // Generate the PDF (assuming you have a PDF generation method)
+        $pdf = $this->generatePdf($commande);
+
+        // Return with inline display
+        return $pdf->stream('commande-' . $commande->id . '.pdf');
+    }
+
+    /**
+     * Force download the PDF
+     */
+    public function downloadPdf(Commande $commande)
+    {
+        // Generate the PDF
+        $pdf = $this->generatePdf($commande);
+
+        // Return with download
+        return $pdf->download('commande-' . $commande->id . '.pdf');
+    }
+
+    /**
+     * Generate the PDF (extract your existing PDF generation logic here)
+     */
+    private function generatePdf(Commande $commande)
+    {
+        // Your existing PDF generation code goes here
+        // For example, if you're using barryvdh/laravel-dompdf:
+        $pdf = FacadePdf::loadView('commandes.pdf', compact('commande'));
+
+        return $pdf;
     }
 }
