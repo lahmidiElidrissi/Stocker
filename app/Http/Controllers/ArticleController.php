@@ -15,8 +15,7 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            // Use the withStock scope to get current stock levels for all articles
-            $articles = Article::with('categorie')->withStock()->select('articles.*');
+            $articles = Article::with('categorie')->select('articles.*');
 
             return DataTables::of($articles)
                 ->addColumn('checkbox', function ($article) {
@@ -31,26 +30,20 @@ class ArticleController extends Controller
                 ->editColumn('categorie', function ($article) {
                     return $article->categorie->NomeCategorie ?? 'N/A';
                 })
-                // Add this column to display current stock
-                ->addColumn('stock', function ($article) {
-                    $stock = $article->stock;
-                    $class = $stock <= 5 ? 'badge bg-danger' : ($stock <= 10 ? 'badge bg-warning' : 'badge bg-success');
-                    return '<span class="' . $class . '">' . $stock . '</span>';
-                })
                 ->addColumn('action', function ($article) {
                     return '<div class="d-flex align-items-center">
-                    <a href="' . route('articles.show', $article->id) . '" class="btn btn-info me-2 buttontr d-flex align-items-center">
-                        <i class="mdi mdi-eye mx-auto"></i>
-                    </a>
-                    <a href="' . route('articles.edit', $article->id) . '" class="btn btn-primary me-2 buttontr d-flex align-items-center">
-                        <i class="mdi mdi-pencil mx-auto"></i>
-                    </a>
-                    <button class="btn btn-danger delete-article me-2 buttontr d-flex align-items-center" data-id="' . $article->id . '">
-                        <i class="mdi mdi-delete mx-auto"></i>
-                    </button>
-                </div>';
+                        <a href="' . route('articles.show', $article->id) . '" class="btn btn-info me-2 buttontr d-flex align-items-center">
+                            <i class="mdi mdi-eye mx-auto"></i>
+                        </a>
+                        <a href="' . route('articles.edit', $article->id) . '" class="btn btn-primary me-2 buttontr d-flex align-items-center">
+                            <i class="mdi mdi-pencil mx-auto"></i>
+                        </a>
+                        <button class="btn btn-danger delete-article me-2 buttontr d-flex align-items-center" data-id="' . $article->id . '">
+                            <i class="mdi mdi-delete mx-auto"></i>
+                        </button>
+                    </div>';
                 })
-                ->rawColumns(['checkbox', 'image', 'stock', 'action'])
+                ->rawColumns(['checkbox', 'image', 'action'])
                 ->make(true);
         }
 

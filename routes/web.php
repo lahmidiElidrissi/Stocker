@@ -82,15 +82,6 @@ Route::middleware([
     Route::get('achats/{achat}/pdf', [AchatController::class, 'generatePDF'])->name('achats.pdf');
     Route::post('/api/fournisseurs/store', [FournisseurController::class, 'storeFournisseur'])->name('api.fournisseurs.store');
 
-
-    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-        Route::get('/stock', [App\Http\Controllers\StockController::class, 'index'])->name('stock.index');
-        Route::get('/stock/alerts', [App\Http\Controllers\StockController::class, 'alerts'])->name('stock.alerts');
-        Route::get('/stock/report', [App\Http\Controllers\StockController::class, 'report'])->name('stock.report');
-        Route::get('/stock/article/{id}', [App\Http\Controllers\StockController::class, 'getArticleHistory'])->name('stock.article.history');
-    });
-
-
     //Page (Commande) with DB
     Route::resource('commandes', \App\Http\Controllers\CommandeController::class);
     // Bulk delete route
