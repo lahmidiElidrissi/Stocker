@@ -20,8 +20,8 @@ class CreateAchatsTable extends Migration
             $table->foreign("contenir_id")->references('id')->on('contenirs')->onDelete('set null');
             $table->unsignedBigInteger('fournisseur_id')->nullable();
             $table->foreign("fournisseur_id")->references('id')->on('fournisseurs')->onDelete('set null');
-            $table->integer('total');
-            $table->integer('paye')->nullable();
+            $table->float('total');
+            $table->float('paye')->nullable();
             $table->timestamps();
         });
     }

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achat;
+use App\Models\AchatArticle;
 use App\Models\Article;
 use App\Models\Categorie;
 use App\Models\Category;
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -33,7 +37,7 @@ class ArticleController extends Controller
                 ->addColumn('stock', function ($article) {
                     $stock = $article->stock;
                     if ($stock <= 0) {
-                        return '<span class="badge bg-danger">Épuisé</span>';
+                        return '<span class="badge bg-danger">' . $stock . '</span>';
                     } else if ($stock < 10) {
                         return '<span class="badge bg-warning">' . $stock . '</span>';
                     } else {
@@ -206,7 +210,8 @@ class ArticleController extends Controller
             'prix_gros' => 'nullable|numeric|min:0',
             'prix_achat' => 'nullable|numeric|min:0',
             'prix_importation' => 'nullable|numeric|min:0',
-            'categorie_id' => 'nullable|exists:categories,id'
+            'categorie_id' => 'nullable|exists:categories,id',
+            'initial_stock' => 'nullable|numeric|min:0'
         ]);
 
         if ($validator->fails()) {
@@ -216,28 +221,93 @@ class ArticleController extends Controller
             ]);
         }
 
-        $article = new Article();
-        $article->Nome = $request->Nome;
-        $article->barcode = $request->barcode;
-        $article->Prix = $request->Prix;
-        $article->prix_gros = $request->prix_gros;
-        $article->prix_achat = $request->prix_achat;
-        $article->prix_importation = $request->prix_importation;
-        $article->categorie_id = $request->categorie_id;
-        $article->save();
+        DB::beginTransaction();
 
-        return response()->json([
-            'success' => true,
-            'product' => [
-                'id' => $article->id,
-                'Nome' => $article->Nome,
-                'barcode' => $article->barcode,
-                'Prix' => $article->Prix,
-                'prix_gros' => $article->prix_gros,
-                'prix_achat' => $article->prix_achat,
-                'prix_importation' => $article->prix_importation,
-                'categorie_id' => $article->categorie_id
-            ]
-        ]);
+        try {
+            // Create the article
+            $article = new Article();
+            $article->Nome = $request->Nome;
+            $article->barcode = $request->barcode;
+            $article->Prix = $request->Prix;
+            $article->prix_gros = $request->prix_gros;
+            $article->prix_achat = $request->prix_achat;
+            $article->prix_importation = $request->prix_importation;
+            $article->categorie_id = $request->categorie_id;
+            $article->save();
+
+
+            // Check if initial_stock is provided and greater than 0
+            if ($request->has('initial_stock') && $request->initial_stock > 0) {
+
+                // Find or create fournisseur with name "Local Stock"
+                $fournisseur = Fournisseur::firstOrCreate(
+                    ['Nom' => 'Local Stock']
+                );
+
+                // Find the latest "Local Stock" achat or create a new one
+                $achat = Achat::where('Referance', 'Local Stock')
+                    ->where('fournisseur_id', $fournisseur->id)
+                    ->latest()
+                    ->first();
+
+                if (!$achat) {
+                    $achat = Achat::create([
+                        'date' => now()->format('Y-m-d'),
+                        'Referance' => 'Local Stock',
+                        'total' => 0,
+                        'subtotal' => 0,
+                        'tax_rate' => 0,
+                        'tax_amount' => 0,
+                        'paye' => 0,
+                        'fournisseur_id' => $fournisseur->id,
+                    ]);
+                }
+
+                // Calculate price for this article
+                $articlePrice = $article->prix_importation ?: $article->prix_achat ?: $article->Prix;
+                $additionalTotal = floatval($articlePrice) * floatval($request->initial_stock);
+
+                // Update the achat totals
+                $achat->total += $additionalTotal;
+                $achat->subtotal += $additionalTotal;
+                $achat->paye += $additionalTotal;
+                $achat->save();
+
+                // Create an achatArticle record to represent initial stock
+                $achatArticle = new AchatArticle();
+                $achatArticle->achat_id = $achat->id;
+                $achatArticle->article_id = $article->id;
+                $achatArticle->Quantite = $request->initial_stock;
+                $achatArticle->prix = $articlePrice;
+                $achatArticle->prix_achat = $article->prix_achat ?: 0;
+                $achatArticle->prix_gros = $article->prix_gros ?: 0;
+                $achatArticle->prix_importation = $article->prix_importation ?: 0;
+                $achatArticle->save();
+            }
+
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'product' => [
+                    'id' => $article->id,
+                    'Nome' => $article->Nome,
+                    'barcode' => $article->barcode,
+                    'Prix' => $article->Prix,
+                    'prix_gros' => $article->prix_gros,
+                    'prix_achat' => $article->prix_achat,
+                    'prix_importation' => $article->prix_importation,
+                    'categorie_id' => $article->categorie_id,
+                    'stock' => $request->initial_stock ?: 0
+                ]
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
     }
 }

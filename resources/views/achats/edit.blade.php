@@ -84,7 +84,7 @@
 
                                     </div>
 
-                                    <div class="form-group mb-3">
+                                    {{-- <div class="form-group mb-3">
                                         <label for="contenir_id">Contenir</label>
                                         <select class="form-control select2" id="contenir_id" name="contenir_id">
                                             <option value="">Sélectionner un Contenir</option>
@@ -95,7 +95,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="col-md-6">

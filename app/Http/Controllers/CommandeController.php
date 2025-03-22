@@ -7,6 +7,7 @@ use App\Models\AricleCommande;
 use App\Models\Article;
 use App\Models\Categorie;
 use App\Models\Client;
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +67,8 @@ class CommandeController extends Controller
         $clients = Client::all();
         $articles = Article::all();
         $categories = Categorie::all();
-        return view('commandes.create', compact('clients', 'articles', 'categories'));
+        $fournisseurs = Fournisseur::orderBy('Nom')->get();
+        return view('commandes.create', compact('clients', 'articles', 'categories' , 'fournisseurs'));
     }
 
     /**
@@ -173,11 +175,12 @@ class CommandeController extends Controller
         $commande = Commande::findOrFail($id);
         $clients = Client::orderBy('Nom')->get();
         $categories = Categorie::orderBy('NomeCategorie')->get();
+        $fournisseurs = Fournisseur::orderBy('Nom')->get();
         $commandeArticles = AricleCommande::where('commande_id', $id)
             ->with('article')
             ->get();
 
-        return view('commandes.edit', compact('commande', 'clients', 'categories', 'commandeArticles'));
+        return view('commandes.edit', compact('commande', 'clients', 'categories', 'commandeArticles' , 'fournisseurs'));
     }
 
     /**
