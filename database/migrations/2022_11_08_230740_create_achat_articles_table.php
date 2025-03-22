@@ -15,7 +15,7 @@ class CreateAchatArticlesTable extends Migration
     {
         Schema::create('achat_articles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('achat_id');
+            $table->unsignedBigInteger('achat_id')->nullable();
             $table->foreign("achat_id")->references('id')->on('Achats')->onDelete('cascade');
             $table->unsignedBigInteger('article_id');
             $table->foreign("article_id")->references('id')->on('Articles')->onDelete('cascade');

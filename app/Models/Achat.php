@@ -9,15 +9,7 @@ class Achat extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'date',
-        'fournisseur_id',
-        'contenir_id',
-        'subtotal',
-        'tax_rate',
-        'tax_amount',
-        'total'
-    ];
+    protected $guarded = [];
 
     /**
      * Get the supplier that owns the purchase.

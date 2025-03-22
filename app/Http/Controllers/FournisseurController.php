@@ -93,8 +93,8 @@ class FournisseurController extends Controller
         try {
             $request->validate([
                 'Nom' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'telephone' => 'required|string|max:20',
+                'email' => 'nullable|email|max:255',
+                'telephone' => 'nullable|string|max:20',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 

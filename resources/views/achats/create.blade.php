@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group mb-3">
+                                    {{-- <div class="form-group mb-3">
                                         <label for="contenir_id">Contenir</label>
                                         <select class="form-control select2" id="contenir_id" name="contenir_id">
                                             <option value="">Sélectionner un Contenir</option>
@@ -93,7 +93,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="col-md-6">
@@ -651,8 +651,8 @@
             }
 
             // Validate form
-            if (!formData.get('Nom') || !formData.get('email') || !formData.get('telephone')) {
-                showWarningToast('Le nom, l\'email et le num&eacute;ro de t&eacute;l&eacute;phone sont obligatoires');
+            if (!formData.get('Nom') ) {
+                showWarningToast('Le nom sont obligatoires');
                 return;
             }
 

@@ -164,7 +164,7 @@
                                                 <div class="price-title">Stock disponible</div>
                                                 <div class="price-value">
                                                     @if($article->stock <= 0)
-                                                        <span class="badge bg-danger">Épuisé</span>
+                                                        <span class="badge bg-danger">{{ $article->stock }}</span>
                                                     @elseif($article->stock < 10)
                                                         <span class="badge bg-warning">{{ $article->stock }}</span>
                                                     @else

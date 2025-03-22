@@ -489,29 +489,19 @@
                                         placeholder="Saisir le code-barres">
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="initial_stock">
+                                        <i class="mdi mdi-package-variant"></i> Quantité en stock
+                                    </label>
+                                    <input type="number" class="form-control" id="initial_stock" min="0"
+                                        step="1" value="0" placeholder="Quantité initiale en stock">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label for="new_article_price">
-                                        <i class="mdi mdi-cash"></i> Prix <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" id="new_article_price" min="0"
-                                        step="0.01" required placeholder="0.00">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label for="prix_gros">
-                                        <i class="mdi mdi-cash-multiple"></i> Prix de gros <span
-                                            class="text-danger">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" id="prix_gros" min="0"
-                                        step="0.01" required placeholder="0.00">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="prix_achat">
                                         <i class="mdi mdi-cash-usd"></i> Prix d'achat
@@ -520,9 +510,38 @@
                                         step="0.01" placeholder="0.00">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="prix_importation">
+                                        <i class="mdi mdi-arrow-collapse-down"></i>
+                                        Prix d'importation
+                                    </label>
+                                    <input type="number" class="form-control" id="prix_importation" min="0"
+                                        step="0.01" placeholder="0.00" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="prix_gros">
+                                        <i class="mdi mdi-cash-multiple"></i> Prix de gros
+                                    </label>
+                                    <input type="number" class="form-control" id="prix_gros" min="0"
+                                        step="0.01" required placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="new_article_price">
+                                        <i class="mdi mdi-cash"></i> Prix detail
+                                    </label>
+                                    <input type="number" class="form-control" id="new_article_price" min="0"
+                                        step="0.01" required placeholder="0.00">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
+
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <label for="new_article_category">
@@ -536,6 +555,7 @@
                                     </select>
                                 </div>
                             </div>
+
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <label for="new_article_image">
@@ -723,7 +743,7 @@
 
                 let stockBadge = '';
                 if (article.stock <= 0) {
-                    stockBadge = '<span class="badge bg-danger">Épuisé</span>';
+                    stockBadge = '<span class="badge bg-danger">' + article.stock + '</span>';
                 } else if (article.stock < 10) {
                     stockBadge = '<span class="badge bg-warning">Stock: ' + article.stock + '</span>';
                 } else {
@@ -772,11 +792,7 @@
             // Check if article already exists in the table
             const existingArticleIndex = commandeArticles.findIndex(a => a.id === id);
 
-            if (existingArticleIndex !== -1) {
-                // Update quantity if article already exists
-                commandeArticles[existingArticleIndex].quantity += quantity;
-                updateArticleRow(existingArticleIndex);
-            } else {
+            if (existingArticleIndex !== -1) {} else {
 
                 if (quantity > currentStock) {
                     showWarningToast('Stock insuffisant ! Il ne reste que ' + currentStock + ' unité(s) de "' + name + '"');
@@ -843,7 +859,16 @@
                 const parsedQuantity = parseInt(newQuantity);
                 const article = commandeArticles[articleIndex];
 
-                commandeArticles[articleIndex].quantity = parsedQuantity;
+                if (parsedQuantity > article.stock) {
+                    showWarningToast('Stock insuffisant ! Il ne reste que ' + article.stock + ' unité(s) de "' + article
+                        .name + '"');
+                    // If quantity exceeds stock, limit it to available stock
+                    document.querySelector(`#article_row_${index} .quantity-input`).value = article.stock;
+                    commandeArticles[articleIndex].quantity = article.stock; // Set to max available
+                } else {
+                    // Only set the new quantity if it doesn't exceed stock
+                    commandeArticles[articleIndex].quantity = parsedQuantity;
+                }
 
                 // Update the remaining stock display
                 const remainingStockElement = document.getElementById(`remaining_stock_${article.index}`);
@@ -938,7 +963,9 @@
             formData.append('Prix', document.getElementById('new_article_price').value);
             formData.append('prix_gros', document.getElementById('prix_gros').value);
             formData.append('prix_achat', document.getElementById('prix_achat').value);
+            formData.append('prix_importation', document.getElementById('prix_importation').value);
             formData.append('categorie_id', document.getElementById('new_article_category').value);
+            formData.append('initial_stock', document.getElementById('initial_stock').value);
 
             // Append image if it exists
             const imageFile = document.getElementById('new_article_image').files[0];
@@ -947,8 +974,9 @@
             }
 
 
-            if (!formData.get('Nome') || !formData.get('Prix') || !formData.get('prix_gros')) {
-                alert('Le nom et le prix sont obligatoires');
+            if (!formData.get('Nome') || !formData.get('prix_importation') || !formData.get('prix_gros') || !formData.get(
+                    'Prix')) {
+                showWarningToast('Le nom et le prix de gros et prix d\'achat et prix d\'importation sont obligatoires');
                 return;
             }
 
@@ -979,7 +1007,8 @@
                             data.product.barcode,
                             data.product.Nome,
                             data.product.prix_gros,
-                            1
+                            1,
+                            parseFloat(data.product.stock)
                         );
 
                         // Close modal and reset form
@@ -987,14 +1016,15 @@
                         document.getElementById('new_article_form').reset();
                         document.getElementById('image_preview_container').innerHTML = '';
 
-                        alert('Article créé avec succès');
+                        showSuccessToast('Article créé avec succès');
                     } else {
-                        alert('Erreur: ' + data.message);
+                        console.error('Error:', data.message);
+                        showWarningToast("Une erreur est survenue lors de la création de l'article");
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Une erreur est survenue lors de la création de l\'article');
+                    showWarningToast('Une erreur est survenue lors de la création de l\'article');
 
                     // Reset button state
                     saveButton.innerHTML = originalText;
@@ -1030,7 +1060,14 @@
         // Update due amount
         function updateDueAmount() {
             const total = parseFloat(document.getElementById('total').value) || 0;
-            const paid = parseFloat(document.getElementById('paye').value) || 0;
+            let paid = parseFloat(document.getElementById('paye').value) || 0;
+
+            if (paid > total) {
+                paid = total;
+                document.getElementById('paye').value = total.toFixed(2);
+            }
+
+            // Visual indicator for due amount (negative or positive)
             document.getElementById('du').value = (total - paid).toFixed(2);
 
             // Visual indicator for due amount (negative or positive)
@@ -1048,6 +1085,10 @@
 
         // Document ready functions
         document.addEventListener('DOMContentLoaded', function() {
+            const payeInput = document.getElementById('paye');
+            payeInput.addEventListener('input', function() {
+                updateDueAmount();
+            });
             // Initialize the form
             updateDueAmount();
             generateReference();
@@ -1056,7 +1097,7 @@
             document.getElementById('commande-form').addEventListener('submit', function(e) {
                 if (commandeArticles.length === 0) {
                     e.preventDefault();
-                    alert('Veuillez ajouter au moins un article à la commande.');
+                    showWarningToast('Veuillez ajouter au moins un article à la commande.');
                     return false;
                 }
 
@@ -1102,7 +1143,7 @@
             const clientAddress = document.getElementById('new_client_address').value;
 
             if (!clientName) {
-                alert('Le nom du client est obligatoire');
+                showWarningToast('Le nom du client est obligatoire');
                 return;
             }
 
@@ -1149,14 +1190,15 @@
                         $('#newClientModal').modal('hide');
                         document.getElementById('new_client_form').reset();
 
-                        alert('Client créé avec succès');
+                        showSuccessToast('Client créé avec succès');
                     } else {
-                        alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
+                        console.error('Error:', data.message);
+                        showWarningToast('Une erreur est survenue lors de la création du client. Veuillez réessayer.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Une erreur est survenue lors de la création du client. Veuillez réessayer.');
+                    showWarningToast('Une erreur est survenue lors de la création du client. Veuillez réessayer.');
 
                     // Reset button state
                     saveButton.innerHTML = originalText;
@@ -1204,20 +1246,10 @@
                 });
         }
 
+        // Modified markAsPaid function
         function markAsPaid() {
-            const totalAmount = parseFloat(document.getElementById('total').value) || 0;
-            const paidAmount = parseFloat(document.getElementById('paye').value) || 0;
-            const dueAmount = parseFloat(document.getElementById('du').value) || 0;
-
-            if (dueAmount <= 0) {
-                alert('Ce compte est déjà payé intégralement.');
-                return;
-            }
-
-            // Update the paid amount by adding the current due amount
-            document.getElementById('paye').value = (paidAmount + dueAmount).toFixed(2);
-
-            // Recalculate due amount (should be 0)
+            const total = parseFloat(document.getElementById('total').value) || 0;
+            document.getElementById('paye').value = total.toFixed(2);
             updateDueAmount();
         }
     </script>
