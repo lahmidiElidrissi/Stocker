@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('/vendors/simple-line-icons/css/simple-line-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastify.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css" />
 
     <!-- endinject -->
@@ -30,8 +31,19 @@
     <link rel="stylesheet" type="text/css" href="/vendors/DataTables/datatables.min.css" />
     <link href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
     <style>
-        td:hover {
-            /*cursor: pointer;*/
+        /* Make warning toast more readable with dark text */
+        .warning-toast {
+            color: #333 !important;
+        }
+
+        /* Add a bit more margin between multiple toasts */
+        .toastify {
+            margin-top: 5px;
+        }
+
+        /* Add some custom animations - adjust as needed */
+        .toastify.on {
+            opacity: 1;
         }
     </style>
 </head>
@@ -293,6 +305,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/toastify.js') }}"></script>
 
     @yield('js')
 
@@ -419,5 +432,155 @@
                 }
             }, true);
         });
+
+
+        // Function to show a success toast
+        function showSuccessToast(message, duration = 3000) {
+            Toastify({
+                text: message,
+                duration: duration,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50", // green
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Function to show an error toast
+        function showErrorToast(message, duration = 3000) {
+            Toastify({
+                text: message,
+                duration: duration,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#F44336", // red
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Function to show a warning toast
+        function showWarningToast(message, duration = 3000) {
+            Toastify({
+                text: message,
+                duration: duration,
+                close: true,
+                gravity: "top",
+                position: "right",
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #E32636, #FF033E)",
+                },
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Function to show an info toast
+        function showInfoToast(message, duration = 3000) {
+            Toastify({
+                text: message,
+                duration: duration,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#2196F3", // blue
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Custom confirmation dialog replacement
+        function showConfirmDialog(message, confirmCallback, cancelCallback = null) {
+            // Create container
+            const confirmContainer = document.createElement('div');
+            confirmContainer.className = 'toastify-confirm-container';
+            confirmContainer.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        `;
+
+            // Add message
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            messageElement.style.cssText = `
+            margin-bottom: 20px;
+            color: #333;
+        `;
+            confirmContainer.appendChild(messageElement);
+
+            // Add buttons container
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+        `;
+
+            // Add confirm button
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirmer';
+            confirmButton.style.cssText = `
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            margin-right: 10px;
+        `;
+            confirmButton.onclick = function() {
+                document.body.removeChild(confirmContainer);
+                document.body.removeChild(overlay);
+                if (confirmCallback) confirmCallback();
+            };
+            buttonContainer.appendChild(confirmButton);
+
+            // Add cancel button
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Annuler';
+            cancelButton.style.cssText = `
+            padding: 8px 16px;
+            background-color: #F44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+        `;
+            cancelButton.onclick = function() {
+                document.body.removeChild(confirmContainer);
+                document.body.removeChild(overlay);
+                if (cancelCallback) cancelCallback();
+            };
+            buttonContainer.appendChild(cancelButton);
+
+            confirmContainer.appendChild(buttonContainer);
+
+            // Add overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 9998;
+        `;
+
+            // Add to DOM
+            document.body.appendChild(overlay);
+            document.body.appendChild(confirmContainer);
+        }
     </script>
 </body>

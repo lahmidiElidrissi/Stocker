@@ -208,7 +208,7 @@ $(document).ready(function() {
                 },
                 error: function(xhr, status, error) {
                     console.error('Delete error:', error);
-                    alert('Une erreur est survenue lors de la suppression.');
+                    showWarningToast('Une erreur est survenue lors de la suppression.');
                 }
             });
         }
