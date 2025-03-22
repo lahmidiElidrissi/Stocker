@@ -82,7 +82,6 @@ Route::middleware([
     Route::get('achats/{achat}/pdf', [AchatController::class, 'generatePDF'])->name('achats.pdf');
     Route::post('/api/fournisseurs/store', [FournisseurController::class, 'storeFournisseur'])->name('api.fournisseurs.store');
 
-
     //Page (Commande) with DB
     Route::resource('commandes', \App\Http\Controllers\CommandeController::class);
     // Bulk delete route

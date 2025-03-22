@@ -23,8 +23,12 @@
             margin-top: 10px;
         }
     </style>
+    
 
     <div class="content-wrapper" style="background: #F4F5F778;">
+
+        @include('achats.createFournisseurModal')
+
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
@@ -80,8 +84,6 @@
                                         </div>
 
                                     </div>
-
-                                    @include('achats.createFournisseurModal')
 
                                     <div class="form-group mb-3">
                                         <label for="contenir_id">Contenir</label>
@@ -388,7 +390,7 @@
             }
 
             if (!formData.get('Nome') || !formData.get('Prix')) {
-                alert('Le nom et le prix sont obligatoires');
+                showWarningToast('Le nom et le prix sont obligatoires');
                 return;
             }
 
@@ -422,14 +424,14 @@
                         document.getElementById('image_preview_container').innerHTML = '';
 
                         // Show success message
-                        alert('Article créé avec succès');
+                        showSuccessToast('Article créé avec succès');
                     } else {
-                        alert('Erreur: ' + data.message);
+                        showWarningToast('Erreur: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Une erreur est survenue lors de la création de l\'article');
+                    showWarningToast('Une erreur est survenue lors de la création de l\'article');
                 });
         }
 
@@ -650,7 +652,7 @@
 
             // Validate form
             if (!formData.get('Nom') || !formData.get('email') || !formData.get('telephone')) {
-                alert('Tous les champs sont obligatoires');
+                showWarningToast('Le nom, l\'email et le num&eacute;ro de t&eacute;l&eacute;phone sont obligatoires');
                 return;
             }
 
@@ -675,14 +677,14 @@
                         document.getElementById('fournisseur_image_preview_container').innerHTML = '';
 
                         // Show success message
-                        alert('Fournisseur créé avec succès');
+                        showSuccessToast('Fournisseur créé avec succès');
                     } else {
-                        alert('Erreur: ' + data.message);
+                        showWarningToast('Erreur: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Une erreur est survenue lors de la création du fournisseur');
+                    showWarningToast('Une erreur est survenue lors de la création du fournisseur');
                 });
         }
     </script>

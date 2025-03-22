@@ -90,7 +90,6 @@
       </div>
   </div>
   <!-- end article model -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   @if ($errors->any())
          @foreach ($errors->all() as $error)
              <script>
