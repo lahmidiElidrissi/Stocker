@@ -2,7 +2,6 @@
 
 @section('partialContent')
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         /* Overall theming */
         .content-wrapper {
@@ -194,7 +193,7 @@
     <div class="content-wrapper">
         <div class="container-fluid py-4">
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-md-11">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
@@ -413,7 +412,8 @@
 
                                                 <div class="form-group row mb-3 mt-2">
                                                     <div class="col-sm-12">
-                                                        <button type="button" class="btn btn-success w-100" id="mark-as-paid-btn" onclick="markAsPaid()">
+                                                        <button type="button" class="btn btn-success w-100"
+                                                            id="mark-as-paid-btn" onclick="markAsPaid()">
                                                             <i class="mdi mdi-check-circle"></i> Marquer comme Payé
                                                         </button>
                                                     </div>
@@ -658,7 +658,8 @@
                     "{{ $article->article->barcode ?? 'N/A' }}",
                     "{{ $article->article->Nome }}",
                     {{ $article->CustomPrix }},
-                    {{ $article->Quantite }}
+                    {{ $article->Quantite }},
+                    {{ $article->article->getAvailableStock($commande->id) ?? 0 }}
                 );
             @endforeach
 
@@ -681,7 +682,8 @@
                     data: function(params) {
                         return {
                             term: params.term || '',
-                            page: params.page || 1
+                            page: params.page || 1,
+                            excludeOrderId: {{ $commande->id }}
                         };
                     },
                     processResults: function(data, params) {
@@ -695,15 +697,15 @@
                                         .barcode + ')' : ''),
                                     code: article.barcode,
                                     name: article.Nome,
-                                    price: article.prix_gros
+                                    price: article.prix_gros,
+                                    stock: article.stock_available || 0
                                 };
                             }),
                             pagination: {
                                 more: data.pagination.more
                             }
                         };
-                    },
-                    cache: true
+                    }
                 },
                 minimumInputLength: 1,
                 templateResult: formatArticle
@@ -716,7 +718,8 @@
                         data.code,
                         data.name,
                         data.price,
-                        1
+                        1,
+                        data.stock
                     );
 
                     // Reset select2 after adding article
@@ -730,14 +733,22 @@
                     return article.text;
                 }
 
+                let stockBadge = '';
+                if (article.stock <= 0) {
+                    stockBadge = '<span class="badge bg-danger">Épuisé</span>';
+                } else if (article.stock < 10) {
+                    stockBadge = '<span class="badge bg-warning">Stock: ' + article.stock + '</span>';
+                } else {
+                    stockBadge = '<span class="badge bg-success">Stock: ' + article.stock + '</span>';
+                }
+
                 let $article = $(
                     '<div class="select2-result-article">' +
-                    '<div class="select2-result-article__title">' + article.name + '</div>' +
+                    '<div class="select2-result-article__title">' + article.name + ' ' + stockBadge + '</div>' +
                     (article.code ? '<div class="select2-result-article__code">Code: ' + article.code +
                         '</div>' : '') +
                     '<div class="select2-result-article__price">Prix de gros: ' + parseFloat(article.price)
-                    .toFixed(2) +
-                    '</div>' +
+                    .toFixed(2) + '</div>' +
                     '</div>'
                 );
 
@@ -839,18 +850,21 @@
         }
 
         // Add article to table
-        function addArticleToTable(id, code, name, price, quantity) {
+        function addArticleToTable(id, code, name, price, quantity = 1, currentStock = 0) {
             // Hide no articles row if visible
             document.getElementById('no-articles-row').style.display = 'none';
-
+            
             // Check if article already exists in the table
             const existingArticleIndex = commandeArticles.findIndex(a => a.id === id);
 
             if (existingArticleIndex !== -1) {
-                // Update quantity if article already exists
-                commandeArticles[existingArticleIndex].quantity += quantity;
-                updateArticleRow(existingArticleIndex);
             } else {
+
+                // Show warning if quantity exceeds stock
+                if (quantity > currentStock) {
+                    showWarningToast('Stock insuffisant ! Il ne reste que ' + currentStock + ' unité(s) de "' + name + '"');
+                }
+
                 // Add new article row
                 const articleData = {
                     id: id,
@@ -858,6 +872,7 @@
                     name: name,
                     price: parseFloat(price),
                     quantity: parseInt(quantity),
+                    stock: currentStock,
                     index: articleCounter++
                 };
 
@@ -879,12 +894,15 @@
                         onchange="updateArticlePrice(${articleData.index}, this.value)">
                 </div>
             </td>
-            <td>
+            <td class="d-flex">
                 <div class="input-group">
                     <input type="number" class="form-control quantity-input text-center" style="height: auto;" 
                         value="${articleData.quantity}" min="1" step="1" 
                         onchange="updateArticleQuantity(${articleData.index}, this.value)">
                 </div>
+                <span class="input-group-text w-50 my-2" title="Stock disponible">
+                Stock : <strong id="remaining_stock_${articleData.index}">${articleData.stock - articleData.quantity}</strong>
+            </span>
             </td>
             <td>
                 <span class="fw-bold" id="article_total_${articleData.index}">${(articleData.price * articleData.quantity).toFixed(2)}</span> DH
@@ -905,12 +923,37 @@
         function updateArticleQuantity(index, newQuantity) {
             const articleIndex = commandeArticles.findIndex(a => a.index === index);
             if (articleIndex !== -1) {
-                commandeArticles[articleIndex].quantity = parseInt(newQuantity);
+                const parsedQuantity = parseInt(newQuantity);
+                const article = commandeArticles[articleIndex];
+
+                commandeArticles[articleIndex].quantity = parsedQuantity;
+
+                // Update the remaining stock display
+                const remainingStockElement = document.getElementById(`remaining_stock_${article.index}`);
+                if (remainingStockElement) {
+                    const remainingStock = article.stock - commandeArticles[articleIndex].quantity;
+                    
+                    remainingStockElement.textContent = remainingStock;
+
+                    // Optionally change color based on remaining stock
+                    if (remainingStock <= 0) {
+                        remainingStockElement.classList.add('text-danger');
+                        remainingStockElement.classList.remove('text-warning', 'text-success');
+                    } else if (remainingStock < 5) {
+                        remainingStockElement.classList.add('text-warning');
+                        remainingStockElement.classList.remove('text-danger', 'text-success');
+                    } else {
+                        remainingStockElement.classList.add('text-success');
+                        remainingStockElement.classList.remove('text-danger', 'text-warning');
+                    }
+                }
+
                 updateArticleRow(articleIndex);
                 updateHiddenInputs();
                 calculateTotals();
             }
         }
+
 
         // Update article price
         function updateArticlePrice(index, newPrice) {

@@ -2,7 +2,6 @@
 
 @section('partialContent')
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         /* Overall theming */
         .content-wrapper {
@@ -194,7 +193,7 @@
     <div class="content-wrapper">
         <div class="container-fluid py-4">
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-md-11">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
@@ -685,7 +684,8 @@
                                         .barcode + ')' : ''),
                                     code: article.barcode,
                                     name: article.Nome,
-                                    price: article.prix_gros
+                                    price: article.prix_gros,
+                                    stock: article.stock_available || 0
                                 };
                             }),
                             pagination: {
@@ -706,7 +706,8 @@
                         data.code,
                         data.name,
                         data.price,
-                        1
+                        1,
+                        data.stock
                     );
 
                     // Reset select2 after adding article
@@ -720,14 +721,22 @@
                     return article.text;
                 }
 
+                let stockBadge = '';
+                if (article.stock <= 0) {
+                    stockBadge = '<span class="badge bg-danger">Épuisé</span>';
+                } else if (article.stock < 10) {
+                    stockBadge = '<span class="badge bg-warning">Stock: ' + article.stock + '</span>';
+                } else {
+                    stockBadge = '<span class="badge bg-success">Stock: ' + article.stock + '</span>';
+                }
+
                 let $article = $(
                     '<div class="select2-result-article">' +
-                    '<div class="select2-result-article__title">' + article.name + '</div>' +
+                    '<div class="select2-result-article__title">' + article.name + ' ' + stockBadge + '</div>' +
                     (article.code ? '<div class="select2-result-article__code">Code: ' + article.code +
                         '</div>' : '') +
-                    '<div class="select2-result-article__price">Prix de gros : ' + parseFloat(article.price)
-                    .toFixed(2) +
-                    '</div>' +
+                    '<div class="select2-result-article__price">Prix de gros: ' + parseFloat(article.price)
+                    .toFixed(2) + '</div>' +
                     '</div>'
                 );
 
@@ -754,6 +763,171 @@
             // Calculate totals on page load
             calculateTotals();
         });
+
+        // Add article to table
+        function addArticleToTable(id, code, name, price, quantity, currentStock) {
+            // Hide no articles row if visible
+            document.getElementById('no-articles-row').style.display = 'none';
+
+            // Check if article already exists in the table
+            const existingArticleIndex = commandeArticles.findIndex(a => a.id === id);
+
+            if (existingArticleIndex !== -1) {
+                // Update quantity if article already exists
+                commandeArticles[existingArticleIndex].quantity += quantity;
+                updateArticleRow(existingArticleIndex);
+            } else {
+
+                if (quantity > currentStock) {
+                    showWarningToast('Stock insuffisant ! Il ne reste que ' + currentStock + ' unité(s) de "' + name + '"');
+                }
+
+                // Add new article row
+                const articleData = {
+                    id: id,
+                    code: code || 'N/A',
+                    name: name,
+                    price: parseFloat(price),
+                    quantity: parseInt(quantity),
+                    stock: currentStock,
+                    index: articleCounter++
+                };
+
+                commandeArticles.push(articleData);
+
+                const tableBody = document.querySelector('#articles-table tbody');
+                const newRow = document.createElement('tr');
+                newRow.id = `article_row_${articleData.index}`;
+                tableBody.appendChild(newRow);
+
+                newRow.innerHTML = `
+            <td>${articleData.code}</td>
+            <td style="text-wrap: unset;">${articleData.name}</td>
+            <td>
+                <div class="input-group">
+                    <span class="input-group-text">DH</span>
+                    <input type="number" class="form-control price-input" 
+                        value="${articleData.price.toFixed(2)}" min="0" step="0.01" 
+                        onchange="updateArticlePrice(${articleData.index}, this.value)">
+                </div>
+            </td>
+            <td class="d-flex">
+                <div class="input-group w-50">
+                    <input type="number" class="form-control quantity-input text-center" style="height: auto;" 
+                        value="${articleData.quantity}" min="1" step="1" 
+                        onchange="updateArticleQuantity(${articleData.index}, this.value)">
+                </div>
+                <span class="input-group-text w-50 my-2" title="Stock disponible">
+                    Stock : <strong id="remaining_stock_${articleData.index}">${articleData.stock - articleData.quantity}</strong>
+                </span>
+            </td>
+            <td>
+                <span class="fw-bold" id="article_total_${articleData.index}">${(articleData.price * articleData.quantity).toFixed(2)}</span> DH
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeArticle(${articleData.index})">
+                    <i class="mdi mdi-delete"></i>
+                </button>
+            </td>
+        `;
+            }
+
+            updateHiddenInputs();
+            calculateTotals();
+        }
+
+        // Update article quantity
+        function updateArticleQuantity(index, newQuantity) {
+            const articleIndex = commandeArticles.findIndex(a => a.index === index);
+            if (articleIndex !== -1) {
+                const parsedQuantity = parseInt(newQuantity);
+                const article = commandeArticles[articleIndex];
+
+                commandeArticles[articleIndex].quantity = parsedQuantity;
+
+                // Update the remaining stock display
+                const remainingStockElement = document.getElementById(`remaining_stock_${article.index}`);
+                if (remainingStockElement) {
+                    const remainingStock = article.stock - commandeArticles[articleIndex].quantity;
+                    remainingStockElement.textContent = remainingStock;
+
+                    // Optionally change color based on remaining stock
+                    if (remainingStock <= 0) {
+                        remainingStockElement.classList.add('text-danger');
+                        remainingStockElement.classList.remove('text-warning', 'text-success');
+                    } else if (remainingStock < 5) {
+                        remainingStockElement.classList.add('text-warning');
+                        remainingStockElement.classList.remove('text-danger', 'text-success');
+                    } else {
+                        remainingStockElement.classList.add('text-success');
+                        remainingStockElement.classList.remove('text-danger', 'text-warning');
+                    }
+                }
+
+                updateArticleRow(articleIndex);
+                updateHiddenInputs();
+                calculateTotals();
+            }
+        }
+
+        // Update article price
+        function updateArticlePrice(index, newPrice) {
+            const articleIndex = commandeArticles.findIndex(a => a.index === index);
+            if (articleIndex !== -1) {
+                commandeArticles[articleIndex].price = parseFloat(newPrice);
+                updateArticleRow(articleIndex);
+                updateHiddenInputs();
+                calculateTotals();
+            }
+        }
+
+        // Update article row display
+        function updateArticleRow(index) {
+            const article = commandeArticles[index];
+            const totalCell = document.getElementById(`article_total_${article.index}`);
+            if (totalCell) {
+                totalCell.textContent = (article.price * article.quantity).toFixed(2);
+            }
+        }
+
+        // Remove article from table
+        function removeArticle(index) {
+            const articleIndex = commandeArticles.findIndex(a => a.index === index);
+            if (articleIndex !== -1) {
+                // Remove row
+                const row = document.getElementById(`article_row_${index}`);
+                if (row) {
+                    row.remove();
+
+                    // Show "no articles" message if no articles left
+                    if (commandeArticles.length === 1) { // 1 because we're removing it after this check
+                        document.getElementById('no-articles-row').style.display = '';
+                    }
+                }
+
+                // Remove from array
+                commandeArticles.splice(articleIndex, 1);
+
+                updateHiddenInputs();
+                calculateTotals();
+            }
+        }
+
+        // Update hidden inputs for form submission
+        function updateHiddenInputs() {
+            const container = document.getElementById('article_inputs_container');
+            container.innerHTML = '';
+
+            // Make sure we're generating proper input fields with array notation
+            commandeArticles.forEach((article, index) => {
+                container.innerHTML += `
+            <input type="hidden" name="articles[${index}][article_id]" value="${article.id}">
+            <input type="hidden" name="articles[${index}][Quantite]" value="${article.quantity}">
+            <input type="hidden" name="articles[${index}][CustomPrix]" value="${article.price}">
+        `;
+            });
+        }
+
 
         // Create new article
         function createNewArticle() {
@@ -826,138 +1000,6 @@
                     saveButton.innerHTML = originalText;
                     saveButton.disabled = false;
                 });
-        }
-
-        // Add article to table
-        function addArticleToTable(id, code, name, price, quantity) {
-            // Hide no articles row if visible
-            document.getElementById('no-articles-row').style.display = 'none';
-
-            // Check if article already exists in the table
-            const existingArticleIndex = commandeArticles.findIndex(a => a.id === id);
-
-            if (existingArticleIndex !== -1) {
-                // Update quantity if article already exists
-                commandeArticles[existingArticleIndex].quantity += quantity;
-                updateArticleRow(existingArticleIndex);
-            } else {
-                // Add new article row
-                const articleData = {
-                    id: id,
-                    code: code || 'N/A',
-                    name: name,
-                    price: parseFloat(price),
-                    quantity: parseInt(quantity),
-                    index: articleCounter++
-                };
-
-                commandeArticles.push(articleData);
-
-                const tableBody = document.querySelector('#articles-table tbody');
-                const newRow = document.createElement('tr');
-                newRow.id = `article_row_${articleData.index}`;
-                tableBody.appendChild(newRow);
-
-                newRow.innerHTML = `
-            <td>${articleData.code}</td>
-            <td style="text-wrap: unset;">${articleData.name}</td>
-            <td>
-                <div class="input-group">
-                    <span class="input-group-text">DH</span>
-                    <input type="number" class="form-control price-input" 
-                        value="${articleData.price.toFixed(2)}" min="0" step="0.01" 
-                        onchange="updateArticlePrice(${articleData.index}, this.value)">
-                </div>
-            </td>
-            <td>
-                <div class="input-group">
-                    <input type="number" class="form-control quantity-input text-center" style="height: auto;" 
-                        value="${articleData.quantity}" min="1" step="1" 
-                        onchange="updateArticleQuantity(${articleData.index}, this.value)">
-                </div>
-            </td>
-            <td>
-                <span class="fw-bold" id="article_total_${articleData.index}">${(articleData.price * articleData.quantity).toFixed(2)}</span> DH
-            </td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm" onclick="removeArticle(${articleData.index})">
-                    <i class="mdi mdi-delete"></i>
-                </button>
-            </td>
-        `;
-            }
-
-            updateHiddenInputs();
-            calculateTotals();
-        }
-
-        // Update article quantity
-        function updateArticleQuantity(index, newQuantity) {
-            const articleIndex = commandeArticles.findIndex(a => a.index === index);
-            if (articleIndex !== -1) {
-                commandeArticles[articleIndex].quantity = parseInt(newQuantity);
-                updateArticleRow(articleIndex);
-                updateHiddenInputs();
-                calculateTotals();
-            }
-        }
-
-        // Update article price
-        function updateArticlePrice(index, newPrice) {
-            const articleIndex = commandeArticles.findIndex(a => a.index === index);
-            if (articleIndex !== -1) {
-                commandeArticles[articleIndex].price = parseFloat(newPrice);
-                updateArticleRow(articleIndex);
-                updateHiddenInputs();
-                calculateTotals();
-            }
-        }
-
-        // Update article row display
-        function updateArticleRow(index) {
-            const article = commandeArticles[index];
-            const totalCell = document.getElementById(`article_total_${article.index}`);
-            if (totalCell) {
-                totalCell.textContent = (article.price * article.quantity).toFixed(2);
-            }
-        }
-
-        // Remove article from table
-        function removeArticle(index) {
-            const articleIndex = commandeArticles.findIndex(a => a.index === index);
-            if (articleIndex !== -1) {
-                // Remove row
-                const row = document.getElementById(`article_row_${index}`);
-                if (row) {
-                    row.remove();
-
-                    // Show "no articles" message if no articles left
-                    if (commandeArticles.length === 1) { // 1 because we're removing it after this check
-                        document.getElementById('no-articles-row').style.display = '';
-                    }
-                }
-
-                // Remove from array
-                commandeArticles.splice(articleIndex, 1);
-
-                updateHiddenInputs();
-                calculateTotals();
-            }
-        }
-
-        // Update hidden inputs for form submission
-        function updateHiddenInputs() {
-            const container = document.getElementById('article_inputs_container');
-            container.innerHTML = '';
-
-            // Make sure we're generating proper input fields with array notation
-            commandeArticles.forEach((article, index) => {
-                container.innerHTML += `
-            <input type="hidden" name="articles[${index}][article_id]" value="${article.id}">
-            <input type="hidden" name="articles[${index}][Quantite]" value="${article.quantity}">
-            <input type="hidden" name="articles[${index}][CustomPrix]" value="${article.price}">
-        `;
-            });
         }
 
         // Calculate totals

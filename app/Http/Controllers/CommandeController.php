@@ -140,8 +140,6 @@ class CommandeController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            dd($e->getMessage());
-
             return redirect()->back()
                 ->with('error', 'Une erreur est survenue: ' . $e->getMessage())
                 ->withInput();
@@ -358,5 +356,23 @@ class CommandeController extends Controller
         $pdf = FacadePdf::loadView('commandes.pdf', compact('commande'));
 
         return $pdf;
+    }
+
+    // Add these methods to your CommandeController
+
+    /**
+     * Generate and display a receipt-style ticket for a commande
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showTicket($id)
+    {
+        $commande = Commande::with(['client', 'articles.article'])->findOrFail($id);
+
+        $pdf = FacadePdf::loadView('commandes.ticket', compact('commande'));
+        $pdf->setPaper([0, 0, 226.77, 841.89]);
+
+        return $pdf->stream('ticket-commande-' . $commande->id . '.pdf');
     }
 }

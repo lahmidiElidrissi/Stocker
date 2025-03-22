@@ -65,6 +65,7 @@
                                 <th>Prix de gros</th>
                                 <th>Prix d'achat</th>
                                 <th>Prix d'importation</th>
+                                <th>Stock</th>
                                 <th>Categorie</th>
                                 <th>Actions</th>
                             </tr>
@@ -120,6 +121,7 @@ $(document).ready(function() {
             {data: 'prix_gros', name: 'prix_gros' , rander : function(data) { return data + ' Dh'; }},
             {data: 'prix_achat', name: 'prix_achat', rander : function(data) { return data + ' Dh'; }},
             {data: 'prix_importation', name: 'prix_importation', rander : function(data) { return data + ' Dh'; }},
+            {data: 'stock', name: 'stock'},
             {data: 'categorie', name: 'categorie', orderable: false, searchable: false},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             {data: 'barcode', name: 'barcode', searchable: true, visible: false},
