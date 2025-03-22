@@ -90,6 +90,8 @@ Route::middleware([
     // PDF generation route
     Route::get('commandes/{commande}/pdf/view', [CommandeController::class, 'viewPdf'])->name('commandes.pdf.view');
     Route::get('commandes/{commande}/pdf/download', [CommandeController::class, 'downloadPdf'])->name('commandes.pdf.download');
+    // Add these routes to your web.php routes file
+    Route::get('/commandes/{commande}/ticket/view', [CommandeController::class, 'showTicket'])->name('commandes.ticket.view');
 
     // API routes for AJAX
     Route::get('api/articles/search', [ArticleController::class, 'apiSearch'])->name('api.articles.search');

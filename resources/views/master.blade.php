@@ -7,29 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title> {{ env('APP_NAME') }} </title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="{{ asset('/vendors/feather/feather.css') }}">
-    <link rel="stylesheet" href="{{ asset('/vendors/mdi/css/materialdesignicons.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/vendors/ti-icons/css/themify-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('/vendors/typicons/typicons.css') }}">
-    <link rel="stylesheet" href="{{ asset('/vendors/simple-line-icons/css/simple-line-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('/vendors/css/vendor.bundle.base.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/feather/feather.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/mdi/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/ti-icons/css/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/typicons/typicons.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/simple-line-icons/css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/select2/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastify.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('vendors/flag-icon-css/css/flag-icon.min.css')}}" />
 
     <!-- endinject -->
     <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="{{ asset('/js/select.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/select.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="{{ asset('/css/vertical-layout-light/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/vertical-layout-light/style.css') }}">
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{ asset('/images/favicon.png') }}" />
-    <script src="{{ asset('/js/globalApp.js') }}"></script>
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" />
+    <script src="{{ asset('js/globalApp.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" type="text/css" href="/vendors/DataTables/datatables.min.css" />
-    <link href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
+    <link href="{{ asset('css/buttons.dataTables.min.css') }}" />
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+
     <style>
         /* Make warning toast more readable with dark text */
         .warning-toast {
@@ -59,7 +63,7 @@
                 </button>
             </div>
             <div>
-                <a class="navbar-brand brand-logo" href="{{ route('welcome') }}" onclick="loadNow()">
+                <a class="navbar-brand brand-logo" href="{{ route('welcome') }}">
                     <img src="{{ asset('images/logo.png') }}" alt="logo" style="height: 50px;" />
                 </a>
                 <div id="Settings-Mobile">
@@ -78,7 +82,7 @@
                             </div>
                             <a href="user/profile" class="dropdown-item"><i
                                     class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"
-                                    onclick="loadNow()"></i> {{ __('master.profile') }} </a>
+                                ></i> {{ __('master.profile') }} </a>
                             <a class="dropdown-item"><i
                                     class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i>
                                 {{ __('master.messages') }}</a>
@@ -162,13 +166,13 @@
                         </div>
                         <a href="user/profile" class="dropdown-item"><i
                                 class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"
-                                onclick="loadNow()"></i> {{ __('master.profile') }} </a>
+                            ></i> {{ __('master.profile') }} </a>
                         <a class="dropdown-item"><i
                                 class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"
-                                onclick="loadNow()"></i> {{ __('master.messages') }}</a>
+                            ></i> {{ __('master.messages') }}</a>
                         <a class="dropdown-item signout" onclick="singout()"><i
                                 class="dropdown-item-icon mdi mdi-power text-primary me-2"
-                                onclick="loadNow()"></i>{{ __('master.lougout') }}</a>
+                            ></i>{{ __('master.lougout') }}</a>
                         <form method="POST" action="{{ route('logout') }}" x-data style="display: none;">
                             @csrf
                             <input class="dropdown-item input-submit-form" type="submit" value="">
@@ -190,7 +194,7 @@
         <nav class="sidebar sidebar-offcanvas my-element" id="sidebar">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('welcome') }}" onclick="loadNow()">
+                    <a class="nav-link" href="{{ route('welcome') }}">
                         <i class="mdi mdi-home  menu-icon"></i>
                         <span class="menu-title">Dashboard</span>
                     </a>
@@ -206,18 +210,18 @@
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{ route('achats.index') }}"
-                                    onclick="loadNow()">{{ __('master.GA') }}</a></li>
+                                >{{ __('master.GA') }}</a></li>
                             <li class="nav-item"> <a class="nav-link"
                                     href="{{ route('viewGestionDesFournisseurs') }}"
-                                    onclick="loadNow()">{{ __('master.GF') }}</a></li>
+                                >{{ __('master.GF') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('viewGestionDesContenirs') }}"
-                                    onclick="loadNow()">{{ __('master.GCN') }}</a></li>
+                                >{{ __('master.GCN') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('viewGestionDesCategories') }}"
-                                    onclick="loadNow()">{{ __('master.GCT') }}</a></li>
+                                >{{ __('master.GCT') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('articles.index') }}"
-                                    onclick="loadNow()">{{ __('master.GAR') }}</a></li>
+                                >{{ __('master.GAR') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('viewGestionDesClients') }}"
-                                    onclick="loadNow()">{{ __('master.GC') }}</a></li>
+                                >{{ __('master.GC') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -231,9 +235,9 @@
                     <div class="collapse" id="form-elements">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"><a class="nav-link" href="{{ route('commandes.index') }}"
-                                    onclick="loadNow()">{{ __('master.managerOrder') }}</a></li>
+                                >{{ __('master.managerOrder') }}</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('viewGestiondesCheqes') }}"
-                                    onclick="loadNow()">{{ __('master.chequeManagement') }}</a></li>
+                                >{{ __('master.chequeManagement') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -247,11 +251,11 @@
                     <div class="collapse" id="charts">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{ route('RapportDeVente') }}"
-                                    onclick="loadNow()">{{ __('master.VentesRapports') }}</a></li>
+                                >{{ __('master.VentesRapports') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('produitPlusVente') }}"
-                                    onclick="loadNow()">{{ __('master.ProduitsTop') }}</a></li>
+                                >{{ __('master.ProduitsTop') }}</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('TopClient') }}"
-                                    onclick="loadNow()">{{ __('master.ClientRapport') }}</a></li>
+                                >{{ __('master.ClientRapport') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -265,7 +269,7 @@
                     <div class="collapse" id="auth">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link"
-                                    href="{{ route('viewGestiondesUtilisateurs') }}" onclick="loadNow()">
+                                    href="{{ route('viewGestiondesUtilisateurs') }}">
                                     {{ __('master.Users') }} </a></li>
                         </ul>
                     </div>
@@ -392,13 +396,6 @@
                 } catch (error) {}
             }
         });
-
-        function loadNow() {
-            $(".loading-overlay").fadeIn(500);
-            setTimeout(function() {
-                $(".loading-overlay").fadeOut(500);
-            }, 4000);
-        }
 
         setTimeout(() => {
             var width = document.body.clientWidth;

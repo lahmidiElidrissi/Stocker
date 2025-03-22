@@ -30,6 +30,16 @@ class ArticleController extends Controller
                 ->editColumn('categorie', function ($article) {
                     return $article->categorie->NomeCategorie ?? 'N/A';
                 })
+                ->addColumn('stock', function ($article) {
+                    $stock = $article->stock;
+                    if ($stock <= 0) {
+                        return '<span class="badge bg-danger">Épuisé</span>';
+                    } else if ($stock < 10) {
+                        return '<span class="badge bg-warning">' . $stock . '</span>';
+                    } else {
+                        return '<span class="badge bg-success">' . $stock . '</span>';
+                    }
+                })
                 ->addColumn('action', function ($article) {
                     return '<div class="d-flex align-items-center">
                         <a href="' . route('articles.show', $article->id) . '" class="btn btn-info me-2 buttontr d-flex align-items-center">
@@ -43,7 +53,7 @@ class ArticleController extends Controller
                         </button>
                     </div>';
                 })
-                ->rawColumns(['checkbox', 'image', 'action'])
+                ->rawColumns(['checkbox', 'image', 'action', 'stock'])
                 ->make(true);
         }
 
@@ -164,14 +174,23 @@ class ArticleController extends Controller
     {
         $term = $request->input('term');
         $page = $request->input('page', 1);
+        $excludeOrderId = $request->input('excludeOrderId');
         $perPage = 10;
 
         $articles = Article::where('barcode', 'LIKE', "%{$term}%")
             ->orWhere('Nome', 'LIKE', "%{$term}%")
             ->paginate($perPage, ['*'], 'page', $page);
 
+        // Transform the articles to include stock information
+        $articleData = $articles->items();
+        foreach ($articleData as &$article) {
+            $article->stock_available = $excludeOrderId ?
+                $article->getAvailableStock($excludeOrderId) :
+                $article->stock;
+        }
+
         return response()->json([
-            'articles' => $articles->items(),
+            'articles' => $articleData,
             'pagination' => [
                 'more' => $articles->hasMorePages()
             ]
