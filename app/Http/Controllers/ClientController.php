@@ -14,12 +14,12 @@ class ClientController extends Controller
     }
     function addClient(Request $request)
     {
-      $request->validate([
+        $request->validate([
             'nomDeClient' => 'required|string|max:35',
             'EmailDeClient' => 'nullable|email|max:50',
             'TelephoneDeCLient' => 'nullable|string|max:20',
-            'SocieteDeCLient'=> 'nullable|max:35',
-            'ImageDeCLient'=> 'nullable|image',
+            'SocieteDeCLient' => 'nullable|max:35',
+            'ImageDeCLient' => 'nullable|image',
         ]);
 
         $NomDeClient = $request->nomDeClient;
@@ -30,19 +30,18 @@ class ClientController extends Controller
         $Client->Telephone = $TelephoneDeCLient;
         $Client->Email = $EmailDeClient;
         $Client->Societe = $request->SocieteDeCLient;
-        if($request->file('ImageDeCLient') != null){
+        if ($request->file('ImageDeCLient') != null) {
             $file = $request->file('ImageDeCLient');
-            $MakePath = '/public/images/e'.date('YmdHi').$file->getClientOriginalName();
+            $MakePath = '/public/images/e' . date('YmdHi') . $file->getClientOriginalName();
             $file->move(public_path('/public/images'), $MakePath);
             $Client->image = $MakePath;
         }
-        if($request->file('ImageDeCLient') == null){
-            $MakePath='images\aucunimage.jpg';
+        if ($request->file('ImageDeCLient') == null) {
+            $MakePath = 'images\aucunimage.jpg';
             $Client->image = $MakePath;
         }
         $Client->save();
         return redirect()->route('viewGestionDesClients');
-
     }
 
     function GetInfo(Request $request)
@@ -56,8 +55,8 @@ class ClientController extends Controller
             'nomDeClient' => 'required|string|max:35',
             'EmailDeClient' => 'email|max:50',
             'TelephoneDeCLient' => 'string|max:20',
-            'SocieteDeCLient'=> 'string|max:35',
-            'ImageDeCLient'=> 'image',
+            'SocieteDeCLient' => 'string|max:35',
+            'ImageDeCLient' => 'image',
         ]);
         $Client = client::FindOrFail($request->idDeClient);
         $Client->Nom = $request->nomDeClient;
@@ -65,10 +64,10 @@ class ClientController extends Controller
         $Client->Email = $request->EmailDeClient;
         $Client->Societe = $request->SocieteDeCLient;
         if ($request->file('ImageDeCLient')) {
-        $file = $request->file('ImageDeCLient');
-        $MakePath = '/public/images/e'.date('YmdHi').$file->getClientOriginalName();
-        $file->move(public_path('/public/images'), $MakePath);
-        $Client->image=$MakePath;
+            $file = $request->file('ImageDeCLient');
+            $MakePath = '/public/images/e' . date('YmdHi') . $file->getClientOriginalName();
+            $file->move(public_path('/public/images'), $MakePath);
+            $Client->image = $MakePath;
         }
         $Client->save();
         return redirect()->route('viewGestionDesClients');
@@ -81,14 +80,19 @@ class ClientController extends Controller
         return 1;
     }
 
-    function SelectionDelete (Request $request)
+    function SelectionDelete(Request $request)
     {
         $Selections = $request->Selections;
         foreach ($Selections as $SelectionCurrent) {
             $SelectionCurrent =  client::find($SelectionCurrent);
             $SelectionCurrent->delete();
-           }
+        }
         return 1;
     }
 
+    public function getClientsList()
+    {
+        $clients = Client::select('id', 'Nom')->get();
+        return response()->json($clients);
+    }
 }

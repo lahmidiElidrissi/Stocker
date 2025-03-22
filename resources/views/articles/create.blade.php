@@ -17,6 +17,10 @@
                                 <input type="text" name="Nome" class="form-control" value="{{ old('Nome') }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
+                                <label class="form-label">Prix details</label>
+                                <input type="number" name="Prix" step="0.01" class="form-control" value="{{ old('Prix') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Prix d'achat</label>
                                 <input type="number" name="prix_achat" step="0.01" class="form-control" value="{{ old('prix_achat') }}">
                             </div>
@@ -25,12 +29,12 @@
                                 <input type="number" name="prix_gros" step="0.01" class="form-control" value="{{ old('prix_gros') }}">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Prix</label>
-                                <input type="number" name="Prix" step="0.01" class="form-control" value="{{ old('Prix') }}" required>
+                                <label class="form-label">Prix d'importation</label>
+                                <input type="number" name="prix_importation" step="0.01" class="form-control" value="{{ old('prix_importation') }}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Code barres</label>
-                                <input type="text" name="barcode" class="form-control" value="{{ old('barcode') }}" required>
+                                <input type="text" name="barcode" class="form-control" value="{{ old('barcode') }}" >
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Catégorie</label>

@@ -169,7 +169,7 @@
                                         
                                         <div class="col-md-6">
                                             <label class="form-label">Code barres</label>
-                                            <input type="text" name="Referance" class="form-control" value="{{ $article->barcode }}" required>
+                                            <input type="text" name="barcode" class="form-control" value="{{ $article->barcode }}">
                                         </div>
                                         
                                         <div class="col-12">
@@ -201,6 +201,14 @@
                                             <label class="form-label">Prix de gros</label>
                                             <div class="input-group price-field">
                                                 <input type="number" name="prix_gros" step="0.01" class="form-control" value="{{ $article->prix_gros }}">
+                                                <span class="input-group-text">Dh</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Prix d'importation</label>
+                                            <div class="input-group price-field">
+                                                <input type="number" name="prix_importation" step="0.01" class="form-control" value="{{ $article->prix_importation }}">
                                                 <span class="input-group-text">Dh</span>
                                             </div>
                                         </div>

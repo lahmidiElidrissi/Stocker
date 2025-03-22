@@ -63,6 +63,7 @@ class ArticleController extends Controller
             'Prix' => 'nullable|numeric|min:0',
             'prix_gros' => 'nullable|numeric|min:0',
             'prix_achat' => 'nullable|numeric|min:0',
+            'prix_importation' => 'nullable|numeric|min:0',
             'Referance' => 'nullable',
             'categorie_id' => 'nullable',
             'barcode' => 'nullable',
@@ -106,9 +107,10 @@ class ArticleController extends Controller
     {
         $validatedData = $request->validate([
             'Nome' => 'required|string|max:255',
-            'Prix' => 'nullable|numeric|min:0',
+            'Prix' => 'required|numeric|min:0',
             'prix_gros' => 'nullable|numeric|min:0',
             'prix_achat' => 'nullable|numeric|min:0',
+            'prix_importation' => 'nullable|numeric|min:0',
             'Referance' => 'nullable',
             'categorie_id' => 'nullable',
             'barcode' => 'nullable',
@@ -180,10 +182,11 @@ class ArticleController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'Nome' => 'required|string|max:255',
-            'barcode' => 'required|string',
+            'barcode' => 'nullable|string',
             'Prix' => 'required|numeric|min:0',
-            'prix_gros' => 'required|numeric|min:0',
-            'prix_achat' => 'required|numeric|min:0',
+            'prix_gros' => 'nullable|numeric|min:0',
+            'prix_achat' => 'nullable|numeric|min:0',
+            'prix_importation' => 'nullable|numeric|min:0',
             'categorie_id' => 'nullable|exists:categories,id'
         ]);
 
@@ -200,6 +203,7 @@ class ArticleController extends Controller
         $article->Prix = $request->Prix;
         $article->prix_gros = $request->prix_gros;
         $article->prix_achat = $request->prix_achat;
+        $article->prix_importation = $request->prix_importation;
         $article->categorie_id = $request->categorie_id;
         $article->save();
 
@@ -212,6 +216,7 @@ class ArticleController extends Controller
                 'Prix' => $article->Prix,
                 'prix_gros' => $article->prix_gros,
                 'prix_achat' => $article->prix_achat,
+                'prix_importation' => $article->prix_importation,
                 'categorie_id' => $article->categorie_id
             ]
         ]);

@@ -4,27 +4,20 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
 <style>
-    tr{
-        height:60px;
+    tr {
+        height: 60px;
     }
-    #tableArticle_filter{
+    #commandes-table_info {
         display: none;
     }
-    #tableArticle_info{
-        display: none;
-    }
-    input[type="checkbox"] + .input-helper:before{
+    input[type="checkbox"] + .input-helper:before {
       background: #d7d7d7 !important;
     }
-    input[type="checkbox"]:checked + .input-helper:before
-    {
+    input[type="checkbox"]:checked + .input-helper:before {
       background: #1F3BB3 !important;
     }
-    tr{
-        height:60px;
-    }
-    .buttontr{
-        height:30px;
+    .buttontr {
+        height: 30px;
     }
 </style>
 
@@ -32,28 +25,43 @@
     <div class="row justify-content-center">
         <div class="card col-md-10 col-sm-12">
             <div class="card-body">
-                <h4 class="card-title d-flex justify-content-center">{{__('master.GA')}}</h4>
+                <h4 class="card-title d-flex justify-content-between align-items-center">
+                    Gestion des Commandes
+                    <a href="{{ route('commandes.create') }}" class="btn btn-primary">
+                        <i class="mdi mdi-plus"></i> Nouvelle Commande
+                    </a>
+                </h4>
+                
                 @if (session('success'))
                     <div class="alert alert-success" role="alert">
                         {{ session('success') }}
                     </div>
                 @endif
+                
+                @if (session('error'))
+                    <div class="alert alert-danger" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                
                 <div class="table-responsive">
-                    <div class="d-flex gap-2">
-                        <a href="/achats/create" class="btn btn-primary">Ajouter</a>
+                    <div class="d-flex mb-3">
                         <button type="button" id="bulk_delete" class="btn btn-danger" disabled>
                             <i class="mdi mdi-delete"></i>
                         </button>
                     </div>
-                    <br>
-                    <table class="table table-striped" id="achats-table">
+                    
+                    <table class="table table-striped" id="commandes-table">
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="check_all"></th>
                                 <th>ID</th>
                                 <th>Date</th>
-                                <th>Fournisseur</th>
+                                <th>Référence</th>
+                                <th>Client</th>
                                 <th>Total</th>
+                                <th>Payé</th>
+                                <th>Credit</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -70,65 +78,64 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer ces achats?
+                Êtes-vous sûr de vouloir supprimer ces commandes?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-danger" id="confirmDelete">Supprimer</button>
             </div>
         </div>
     </div>
 </div>
 
-@stop
-
-
-
-
+@endsection
 
 @section('js')
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
+
 <script>
 $(document).ready(function() {
     // DataTable initialization
-    var table = $('#achats-table').DataTable({
+    var table = $('#commandes-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('achats.index') }}",
+        ajax: "{{ route('commandes.index') }}",
         columns: [
             {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
-            {data: 'id', name: 'id', visible: false},
+            {data: 'id', name: 'id'},
             {data: 'date', name: 'date'},
-            {data: 'fournisseur', name: 'fournisseur'},
+            {data: 'reference', name: 'reference'},
+            {data: 'client', name: 'client'},
             {data: 'total', name: 'total', render: function(data) { return data + ' Dh'; }},
+            {data: 'paye', name: 'paye', render: function(data) { return data + ' Dh'; }},
+            {data: 'du', name: 'du', render: function(data) { return data + ' Dh'; }},
             {data: 'actions', name: 'actions', orderable: false, searchable: false},
-            {data: 'updated_at', title: 'Last Updated', orderable: true, visible: false }
+            { data: 'updated_at', title: 'Last Updated', orderable: true, visible: false }
         ],
         language: {
             url: '/datatableTrans/fr-FR.json'
         },
-        order: [[6, 'desc']]
+        order: [[9, 'desc']]
     });
 
     // Handle check all checkbox
     $('#check_all').on('click', function() {
-        $('.achat_checkbox').prop('checked', $(this).prop('checked'));
+        $('.commande_checkbox').prop('checked', $(this).prop('checked'));
         toggleBulkDeleteButton();
     });
 
     // Toggle bulk delete button based on checkbox selection
     function toggleBulkDeleteButton() {
-        if($('.achat_checkbox:checked').length > 0) {
+        if($('.commande_checkbox:checked').length > 0) {
             $('#bulk_delete').prop('disabled', false);
         } else {
             $('#bulk_delete').prop('disabled', true);
@@ -136,7 +143,7 @@ $(document).ready(function() {
     }
 
     // Listen for checkbox changes
-    $(document).on('change', '.achat_checkbox', function() {
+    $(document).on('change', '.commande_checkbox', function() {
         toggleBulkDeleteButton();
     });
 
@@ -147,17 +154,17 @@ $(document).ready(function() {
 
     // Confirm delete button click
     $('#confirmDelete').on('click', function() {
-        var achat_ids = [];
+        var commande_ids = [];
         
-        $('.achat_checkbox:checked').each(function() {
-            achat_ids.push($(this).val());
+        $('.commande_checkbox:checked').each(function() {
+            commande_ids.push($(this).val());
         });
         
         $.ajax({
-            url: "{{ route('achats.multi-delete') }}",
+            url: "{{ route('commandes.multi-delete') }}",
             method: "POST",
             data: {
-                achat_ids: achat_ids,
+                commande_ids: commande_ids,
                 _token: "{{ csrf_token() }}"
             },
             success: function(response) {
@@ -165,54 +172,50 @@ $(document).ready(function() {
                 table.ajax.reload();
                 $('#check_all').prop('checked', false);
                 $('#bulk_delete').prop('disabled', true);
+                
+                // Show success message
+                const alertHtml = `<div class="alert alert-success">${commande_ids.length} commande(s) supprimée(s) avec succès</div>`;
+                $('.card-body').prepend(alertHtml);
+                
+                // Remove alert after 3 seconds
+                setTimeout(function() {
+                    $('.alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 3000);
             }
         });
     });
 
-    // Handle single delete form submission
-    $(document).on('submit', '.delete-form', function(e) {
-        e.preventDefault();
+    // Handle single delete button click
+    $(document).on('click', '.delete-commande', function() {
+        var commandeId = $(this).data('id');
         
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet achat?')) {
-            var form = $(this);
-            
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette commande?')) {
             $.ajax({
-                url: form.attr('action'),
-                method: 'POST',
-                data: form.serialize(),
-                success: function(response) {
-                    table.ajax.reload();
-                }
-            });
-        }
-    });
-
-
-    $(document).on('click', '.btn-delete', function(e) {
-        e.preventDefault();
-        
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet achat?')) {
-            var deleteUrl = $(this).data('url');
-            var token = $(this).data('token');
-            
-            $.ajax({
-                url: deleteUrl,
-                type: 'POST',
+                url: `/commandes/${commandeId}`,
+                type: 'DELETE',
                 data: {
-                    '_method': 'DELETE',
-                    '_token': token
+                    _token: '{{ csrf_token() }}'
                 },
-                success: function(response) {
-                    // Reload the DataTable to reflect the changes
-                    $('#achats-table').DataTable().ajax.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error('Delete error:', error);
-                    alert('Une erreur est survenue lors de la suppression.');
+                success: function(result) {
+                    if (result.success) {
+                        table.ajax.reload();
+                        // Show success message
+                        const alertHtml = `<div class="alert alert-success">Commande supprimée avec succès</div>`;
+                        $('.card-body').prepend(alertHtml);
+                        
+                        // Remove alert after 3 seconds
+                        setTimeout(function() {
+                            $('.alert').fadeOut('slow', function() {
+                                $(this).remove();
+                            });
+                        }, 3000);
+                    }
                 }
             });
         }
     });
 });
 </script>
-@stop
+@endsection

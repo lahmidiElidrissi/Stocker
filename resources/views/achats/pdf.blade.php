@@ -124,7 +124,7 @@
         <div class="header">
             <div class="company-info">
                 <h2 style="margin: 0; color: #007bff;">Bon d'Achat #{{ $achat->id }}</h2>
-                <p>Référence: {{ $achat->Referance ?? 'Non spécifiée' }}</p>
+                <p>Date: {{ $achat->date ?? 'N/A' }}</p>
             </div>
             <div class="purchase-info">
                 <h3 style="margin: 0;">
@@ -136,7 +136,6 @@
                         <span class="badge badge-pending">En attente</span>
                     @endif
                 </h3>
-                <p>Date: {{ \Carbon\Carbon::parse($achat->date)->format('d/m/Y') }}</p>
             </div>
             <div class="clear"></div>
         </div>
@@ -146,18 +145,18 @@
             <div class="supplier-info">
                 <p><span class="label">Fournisseur:</span> {{ $achat->fournisseur->Nom ?? 'Non spécifié' }}</p>
                 @if($achat->fournisseur)
-                    <p><span class="label">Contact:</span> {{ $achat->fournisseur->Telephone ?? 'Non spécifié' }}</p>
-                    <p><span class="label">Adresse:</span> {{ $achat->fournisseur->Adresse ?? 'Non spécifiée' }}</p>
+                    <p><span class="label">Contact:</span> {{ $achat->fournisseur->telephone ?? 'Non spécifié' }}</p>
+                    <p><span class="label">Email:</span> {{ $achat->fournisseur->email ?? 'Non spécifiée' }}</p>
                 @endif
             </div>
             <div class="payment-info">
-                <p><span class="label">Sous-total:</span> {{ number_format($achat->subtotal ?? 0, 2) }} €</p>
-                <p><span class="label">TVA ({{ number_format($achat->tax_rate ?? 0, 2) }}%):</span> {{ number_format($achat->tax_amount ?? 0, 2) }} €</p>
-                <p><span class="label">Total:</span> <strong>{{ number_format($achat->total, 2) }} €</strong></p>
-                <p><span class="label">Montant payé:</span> {{ number_format($achat->paye, 2) }} €</p>
+                <p><span class="label">Total HT:</span> {{ number_format($achat->subtotal ?? 0, 2) }} Dh</p>
+                <p><span class="label">TVA ({{ number_format($achat->tax_rate ?? 0, 2) }}%):</span> {{ number_format($achat->tax_amount ?? 0, 2) }} Dh</p>
+                <p><span class="label">Total TTC:</span> <strong>{{ number_format($achat->total, 2) }} Dh</strong></p>
+                <p><span class="label">Montant payé:</span> {{ number_format($achat->paye, 2) }} Dh</p>
                 <p><span class="label">Reste à payer:</span> 
                     <strong class="{{ $achat->du > 0 ? 'text-danger' : '' }}">
-                        {{ number_format($achat->du, 2) }} €
+                        {{ number_format($achat->du, 2) }} Dh
                     </strong>
                 </p>
             </div>
@@ -182,15 +181,10 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->article->barcode ?? 'N/A' }}</td>
-                        <td>
-                            <strong>{{ $item->article->Nome }}</strong>
-                            @if($item->article->Referance)
-                                <br><span class="small-text">Réf: {{ $item->article->Referance }}</span>
-                            @endif
-                        </td>
-                        <td>{{ number_format($item->prix, 2) }} €</td>
+                        <td>{{ $item->article->Nome ?? 'N/A' }}</td>
+                        <td>{{ number_format($item->Prix, 2) }} Dh</td>
                         <td>{{ $item->Quantite }}</td>
-                        <td>{{ number_format($item->prix * $item->Quantite, 2) }} €</td>
+                        <td>{{ number_format($item->Prix * $item->Quantite, 2) }} Dh</td>
                     </tr>
                 @empty
                     <tr>
@@ -203,8 +197,8 @@
                     <td colspan="4" class="text-right">Total:</td>
                     <td>{{ $achat->articles->sum('Quantite') }}</td>
                     <td>{{ number_format($achat->articles->sum(function($item) { 
-                        return $item->prix * $item->Quantite; 
-                    }), 2) }} €</td>
+                        return $item->Prix * $item->Quantite; 
+                    }), 2) }} Dh</td>
                 </tr>
             </tfoot>
         </table>
@@ -218,7 +212,6 @@
                 @endif
             </div>
             <div class="signature-box">
-                <p style="margin-bottom: 50px;">Signature:</p>
                 <p>____________________________</p>
                 <p>Date: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
             </div>

@@ -193,7 +193,7 @@
                                   <!-- <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?"> -->
                                   <button class="add btn btn-icons btn-rounded btn-primary todo-list-add-btn text-white me-0 pl-12p" onclick="toGestionDeCommande()"><i class="mdi mdi-plus"></i></button>
                                   <script>function toGestionDeCommande(){
-                                 location.href = "/GestionDesCommandes";
+                                 location.href = "/commandes";
                                   }</script>
                                 </div>
                               </div>

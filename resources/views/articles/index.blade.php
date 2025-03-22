@@ -61,9 +61,10 @@
                                 <th><input type="checkbox" id="check_all"></th>
                                 <th>Image</th>
                                 <th>Nome</th>
-                                <th>Prix</th>
+                                <th>Prix details</th>
                                 <th>Prix de gros</th>
                                 <th>Prix d'achat</th>
+                                <th>Prix d'importation</th>
                                 <th>Categorie</th>
                                 <th>Actions</th>
                             </tr>
@@ -114,15 +115,17 @@ $(document).ready(function() {
         columns: [
             {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
             {data: 'image', name: 'image', orderable: false, searchable: false},
-            {data: 'Nome', name: 'Nome'},
-            {data: 'Prix', name: 'Prix'},
-            {data: 'prix_gros', name: 'prix_gros'},
-            {data: 'prix_achat', name: 'prix_achat'},
+            {data: 'Nome', name: 'Nome', searchable: true},
+            {data: 'Prix', name: 'Prix' , rander : function(data) { return data + ' Dh'; }},
+            {data: 'prix_gros', name: 'prix_gros' , rander : function(data) { return data + ' Dh'; }},
+            {data: 'prix_achat', name: 'prix_achat', rander : function(data) { return data + ' Dh'; }},
+            {data: 'prix_importation', name: 'prix_importation', rander : function(data) { return data + ' Dh'; }},
             {data: 'categorie', name: 'categorie', orderable: false, searchable: false},
-            {data: 'action', name: 'action', orderable: false, searchable: false}
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+            {data: 'barcode', name: 'barcode', searchable: true, visible: false},
         ],
         language: {
-            url: '/datatableTrans/fr-FR.json'
+            url: '{{ asset('datatableTrans/fr-FR.json') }}'
         }
     });
 

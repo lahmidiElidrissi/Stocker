@@ -5,22 +5,45 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class commande extends Model
+class Commande extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'date',
+        'reference',
+        'client_id',
+        'subtotal',
+        'tax_rate',
+        'tax_amount',
+        'total',
+        'paye',
+        'du',
+        'notes'
+    ];
+
+    /**
+     * Get the client that owns the commande.
+     */
     public function client()
     {
-        return $this->belongsTo(client::class);  
-    }
-    
-    public function user()
-    {
-        return $this->belongsTo(user::class);  
+        return $this->belongsTo(Client::class);
     }
 
-    public function ArticleCommande()
+    /**
+     * Get the commande articles for the commande.
+     */
+    public function articles()
     {
-        return $this->hasMany(ArticleCommande::class);  
+        return $this->hasMany(AricleCommande::class);
+    }
+
+    /**
+     * Get all the articles associated with the commande directly.
+     */
+    public function articlesItems()
+    {
+        return $this->belongsToMany(Article::class, 'aricle_commandes', 'commande_id', 'article_id')
+                    ->withPivot('CustomPrix', 'Quantite');
     }
 }

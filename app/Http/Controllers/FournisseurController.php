@@ -8,10 +8,7 @@ use App\Models\fournisseur;
 
 class FournisseurController extends Controller
 {
-    function index()
-    {
-
-    }
+    function index() {}
     function addFournisseur(Request $request)
     {
         $request->validate([
@@ -73,13 +70,57 @@ class FournisseurController extends Controller
         return $fournisseurs;
     }
 
-    function SelectionDelete (Request $request)
+    function SelectionDelete(Request $request)
     {
         $Selections = $request->Selections;
         foreach ($Selections as $SelectionCurrent) {
             $SelectionCurrent =  fournisseur::find($SelectionCurrent);
             $SelectionCurrent->delete();
-           }
+        }
         return 1;
+    }
+
+    // Add this to your API controller
+
+    /**
+     * Store a new supplier in the database via AJAX.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeFournisseur(Request $request)
+    {
+        try {
+            $request->validate([
+                'Nom' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'telephone' => 'required|string|max:20',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $fournisseur = new Fournisseur();
+            $fournisseur->Nom = $request->Nom;
+            $fournisseur->email = $request->email;
+            $fournisseur->telephone = $request->telephone;
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('fournisseurs', 'public');
+                $fournisseur->image = $imagePath;
+            }
+
+            $fournisseur->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Fournisseur créé avec succès',
+                'fournisseur' => $fournisseur
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
